@@ -1,5 +1,5 @@
-DROP DATABASE IF EXISTS hms;
-CREATE DATABASE hms;
+-- DROP DATABASE IF EXISTS hms;
+-- CREATE DATABASE hms;
 USE hms;
 CREATE TABLE Patients (
 	patientID VARCHAR(36) PRIMARY KEY DEFAULT (UUID()),
@@ -75,13 +75,17 @@ VALUES
   ('Zeynep', 'Türk', 'Kadın', 1);
 
 
+-- INSERT INTO PatientDoctor (PatientID, DoctorID, VisitDate)
+-- VALUES ('a11450f5-dcd5-11ee-a372-4ccc6a43e5c9', '2', '2024-03-07');
 
-  SELECT * FROM Patients;
+SELECT * FROM Patients;
 SELECT * FROM Doctors;
 SELECT * FROM Departments;
 SELECT * FROM Appointments;
 SELECT * FROM Prescriptions;
 SELECT * FROM PatientDoctor;
+
+
 
 
 
