@@ -8,6 +8,7 @@ import {
   Button,
   FormErrorMessage,
   Select,
+  Link,
 } from "@chakra-ui/react";
 import { Formik, Form, Field } from "formik";
 import * as Yup from "yup";
@@ -37,7 +38,7 @@ const RegisterPage = () => {
 
   return (
     <ChakraProvider>
-      <Box p={8}>
+      <Box p={8} maxW="md" mx="auto">
         <Formik
           initialValues={{
             email: "",
@@ -57,6 +58,7 @@ const RegisterPage = () => {
               <Field name="name">
                 {({ field, form }) => (
                   <FormControl
+                    mt={4}
                     isInvalid={form.errors.name && form.touched.name}
                   >
                     <FormLabel htmlFor="name">Name</FormLabel>
@@ -136,13 +138,19 @@ const RegisterPage = () => {
               </Field>
               {/* Add other fields as needed */}
               <Button
-                mt={4}
+                mt={6}
                 colorScheme="teal"
                 isLoading={props.isSubmitting}
                 type="submit"
+                width="100%"
               >
                 Register
               </Button>
+              <Box mt={4}>
+                <Link href="/login">
+                  You already have an account? Login here!
+                </Link>
+              </Box>
             </Form>
           )}
         </Formik>

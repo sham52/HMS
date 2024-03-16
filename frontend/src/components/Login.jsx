@@ -1,5 +1,5 @@
 import React from 'react';
-import { ChakraProvider, Box, FormControl, FormLabel, Input, Button, FormErrorMessage } from '@chakra-ui/react';
+import { ChakraProvider, Box, FormControl, FormLabel, Input, Button, FormErrorMessage, Link } from '@chakra-ui/react';
 import { Formik, Form, Field } from 'formik';
 import * as Yup from 'yup';
 
@@ -10,14 +10,13 @@ const validationSchema = Yup.object().shape({
 
 const LoginPage = () => {
   const handleSubmit = (values, actions) => {
-    
     console.log(values);
     actions.setSubmitting(false);
   };
 
   return (
     <ChakraProvider>
-      <Box p={8}>
+      <Box p={8} maxW="400px" mx="auto" mt={20}>
         <Formik
           initialValues={{ email: '', password: '' }}
           validationSchema={validationSchema}
@@ -43,9 +42,12 @@ const LoginPage = () => {
                   </FormControl>
                 )}
               </Field>
-              <Button mt={4} colorScheme="teal" isLoading={props.isSubmitting} type="submit">
+              <Button mt={4} colorScheme="teal" isLoading={props.isSubmitting} type="submit" w="100%">
                 Login
               </Button>
+              <Box mt={4}>
+                <Link href="/register">You don't have an account yet? Register here!</Link>
+              </Box>
             </Form>
           )}
         </Formik>

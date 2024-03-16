@@ -6,6 +6,8 @@ import Login from "./components/Login";
 import Home from "./components/Home";
 import Register from "./components/Register";
 import Protected from "./components/Protected";
+import Main from "./components/Main";
+
 const App = () => {
   const [authToken, setAuthToken] = useState(true);
   useEffect(() => {
@@ -15,11 +17,12 @@ const App = () => {
   return (
     <>
       <Routes>
+        <Route path="/" element={<Home />} />
         <Route
-          path="/"
+          path="/main"
           element={
             <Protected authToken={authToken}>
-              <Home />
+              <Main />
             </Protected>
           }
         />
