@@ -18,6 +18,4 @@ connection.connect((err) => {
   console.log("Connected to database as ID " + connection.threadId);
 });
 
-connection.end();
-
 module.exports = connection;
