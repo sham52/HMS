@@ -1,11 +1,22 @@
-import React from 'react';
-import { ChakraProvider, Box, FormControl, FormLabel, Input, Button, FormErrorMessage, Link } from '@chakra-ui/react';
-import { Formik, Form, Field } from 'formik';
-import * as Yup from 'yup';
+import React from "react";
+import {
+  ChakraProvider,
+  Box,
+  FormControl,
+  FormLabel,
+  Input,
+  Button,
+  FormErrorMessage,
+  Link,
+} from "@chakra-ui/react";
+import { Formik, Form, Field } from "formik";
+import * as Yup from "yup";
 
 const validationSchema = Yup.object().shape({
-  email: Yup.string().email('Invalid email address').required('Email is required'),
-  password: Yup.string().required('Password is required'),
+  email: Yup.string()
+    .email("Invalid email address")
+    .required("Email is required"),
+  password: Yup.string().required("Password is required"),
 });
 
 const LoginPage = () => {
@@ -16,9 +27,17 @@ const LoginPage = () => {
 
   return (
     <ChakraProvider>
-      <Box p={8} maxW="400px" mx="auto" mt={20}>
+      <Box
+        p={8}
+        maxW="md"
+        mx="auto"
+        mt="23vh" // Adjust the top margin to center vertically
+        boxShadow="md"
+        borderWidth="1px"
+        borderRadius="md"
+      >
         <Formik
-          initialValues={{ email: '', password: '' }}
+          initialValues={{ email: "", password: "" }}
           validationSchema={validationSchema}
           onSubmit={handleSubmit}
         >
@@ -26,7 +45,9 @@ const LoginPage = () => {
             <Form>
               <Field name="email">
                 {({ field, form }) => (
-                  <FormControl isInvalid={form.errors.email && form.touched.email}>
+                  <FormControl
+                    isInvalid={form.errors.email && form.touched.email}
+                  >
                     <FormLabel htmlFor="email">Email Address</FormLabel>
                     <Input {...field} id="email" placeholder="Email Address" />
                     <FormErrorMessage>{form.errors.email}</FormErrorMessage>
@@ -35,18 +56,34 @@ const LoginPage = () => {
               </Field>
               <Field name="password">
                 {({ field, form }) => (
-                  <FormControl mt={4} isInvalid={form.errors.password && form.touched.password}>
+                  <FormControl
+                    mt={4}
+                    isInvalid={form.errors.password && form.touched.password}
+                  >
                     <FormLabel htmlFor="password">Password</FormLabel>
-                    <Input {...field} type="password" id="password" placeholder="Password" />
+                    <Input
+                      {...field}
+                      type="password"
+                      id="password"
+                      placeholder="Password"
+                    />
                     <FormErrorMessage>{form.errors.password}</FormErrorMessage>
                   </FormControl>
                 )}
               </Field>
-              <Button mt={4} colorScheme="teal" isLoading={props.isSubmitting} type="submit" w="100%">
+              <Button
+                mt={4}
+                colorScheme="teal"
+                isLoading={props.isSubmitting}
+                type="submit"
+                w="100%"
+              >
                 Login
               </Button>
               <Box mt={4}>
-                <Link href="/register">You don't have an account yet? Register here!</Link>
+                <Link href="/register">
+                  You don't have an account yet? Register here!
+                </Link>
               </Box>
             </Form>
           )}

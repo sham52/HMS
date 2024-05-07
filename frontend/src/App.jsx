@@ -9,7 +9,8 @@ import Protected from "./components/Protected";
 import Main from "./components/Main";
 
 const App = () => {
-  const [authToken, setAuthToken] = useState(true);
+  const [authToken, setAuthToken] = useState(true);+
+  
   useEffect(() => {
     console.log("States", authToken);
   }, [authToken]);

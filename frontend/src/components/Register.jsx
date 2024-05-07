@@ -1,4 +1,5 @@
-import React from "react";
+import React, { useState } from "react";
+
 import {
   ChakraProvider,
   Box,
@@ -23,22 +24,66 @@ const validationSchema = Yup.object().shape({
   confirmPassword: Yup.string()
     .oneOf([Yup.ref("password"), null], "Passwords must match")
     .required("Confirm Password is required"),
-  name: Yup.string().required("Name is required"),
-  dateOfBirth: Yup.date().required("Date of Birth is required"),
+  name: Yup.string()
+    .matches(/^[a-zA-ZğüşıöçĞÜŞİÖÇ]+$/, "Name must contain only letters")
+    .required("Name is required"),
+  dateOfBirth: Yup.date()
+    .max(new Date(), "Date of Birth cannot be in the future")
+    .required("Date of Birth is required"),
   gender: Yup.string().required("Gender is required"),
   address: Yup.string().required("Address is required"),
-  phoneNumber: Yup.string().required("Phone Number is required"),
+  phoneNumber: Yup.string()
+    .matches(
+      /^[0-9]{3}[0-9]{3}[0-9]{4}$/,
+      "Phone Number must be in the format XXXXXXXXXX"
+    )
+    .transform((value, originalValue) => {
+      // Remove all spaces from the phone number
+      return originalValue.replace(/\s/g, "");
+    })
+    .required("Phone Number is required"),
 });
-
 const RegisterPage = () => {
-  const handleSubmit = (values, actions) => {
-    console.log(values);
-    actions.setSubmitting(false);
-  };
+  const [isRegistered, setIsRegistered] = useState(false);
 
+  const handleSubmit = async (values, actions) => {
+    try {
+      const response = await fetch("/api/register", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(values),
+      });
+      if (response.ok) {
+        // Registration successful, set isRegistered to true
+        setIsRegistered(true);
+      } else {
+        // Registration failed, handle error
+        console.error("Registration failed");
+        // You can display an error message to the user if needed
+      }
+    } catch (error) {
+      console.error("Error registering user:", error);
+      // You can display an error message to the user if needed
+    } finally {
+      actions.setSubmitting(false);
+    }
+  };
+  if (isRegistered) {
+    return <Redirect to="/main" />;
+  }
   return (
     <ChakraProvider>
-      <Box p={8} maxW="md" mx="auto">
+      <Box
+        p={8}
+        maxW="md"
+        mx="auto"
+        mt="13vh" // Adjust the top margin to center vertically
+        boxShadow="md"
+        borderWidth="1px"
+        borderRadius="md"
+      >
         <Formik
           initialValues={{
             email: "",
@@ -138,10 +183,10 @@ const RegisterPage = () => {
               </Field>
               {/* Add other fields as needed */}
               <Button
+                type="submit"
                 mt={6}
                 colorScheme="teal"
                 isLoading={props.isSubmitting}
-                type="submit"
                 width="100%"
               >
                 Register
