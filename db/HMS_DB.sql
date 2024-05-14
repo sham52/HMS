@@ -3,11 +3,11 @@ CREATE DATABASE hms;
 USE hms;
 
 CREATE TABLE Patients (
-    patientID VARCHAR(36) PRIMARY KEY,
+    patientID VARCHAR(11) PRIMARY KEY,
     firstName VARCHAR(255) NOT NULL,
     lastName VARCHAR(255) NOT NULL,
     dateOfBirth DATE NOT NULL,
-    gender ENUM('Male', 'Female', 'Other') NOT NULL,
+    gender ENUM('Erkek', 'Kadın', 'Diğer') NOT NULL,
     email VARCHAR(255) UNIQUE,
     phoneNumber VARCHAR(14) UNIQUE,
     password VARCHAR(255) NOT NULL
@@ -19,19 +19,19 @@ CREATE TABLE Departments (
 );
 
 CREATE TABLE Doctors (
-    doctorID INT AUTO_INCREMENT PRIMARY KEY,
+    doctorID VARCHAR(11) PRIMARY KEY,
     firstName VARCHAR(255) NOT NULL,
     lastName VARCHAR(255) NOT NULL,
-    gender ENUM('Male', 'Female', 'Other') NOT NULL,
+    gender ENUM('Erkek', 'Kadın', 'Diğer') NOT NULL,
     departmentID INT,
     FOREIGN KEY (departmentID) REFERENCES Departments(departmentID)
 );
 
 CREATE TABLE Appointments (
     appointmentID INT AUTO_INCREMENT PRIMARY KEY,
-    patientID VARCHAR(36),
-    doctorID INT,
     appointmentDate DATE,
+    patientID VARCHAR(11),
+    doctorID VARCHAR(11),
     departmentID INT,
     FOREIGN KEY (patientID) REFERENCES Patients(patientID),
     FOREIGN KEY (doctorID) REFERENCES Doctors(doctorID),
@@ -39,7 +39,7 @@ CREATE TABLE Appointments (
 );
 
 CREATE TABLE Pharmacists (
-	pharmacistID VARCHAR(36) PRIMARY KEY,
+	pharmacistID VARCHAR(11) PRIMARY KEY,
     firstName VARCHAR(255) NOT NULL,
     lastName VARCHAR(255) NOT NULL,
     email VARCHAR(255) UNIQUE,
@@ -48,23 +48,25 @@ CREATE TABLE Pharmacists (
 );
 
 CREATE TABLE Prescriptions (
-    prescriptionID VARCHAR(36) PRIMARY KEY DEFAULT (UUID()),
-    doctorID INT,
+    prescriptionID VARCHAR(5) PRIMARY KEY DEFAULT (UUID()),
     appointmentID INT,
-    pharmacistID VARCHAR(36),
+    patientID VARCHAR(11),
+    doctorID VARCHAR(11),
+    pharmacistID VARCHAR(11),
     prescriptionDate DATE,
     medicationDetails VARCHAR(255),
     FOREIGN KEY (appointmentID) REFERENCES Appointments(appointmentID),
-    FOREIGN KEY (doctorID) REFERENCES Appointments(doctorID),
-    FOREIGN KEY (pharmacistID) REFERENCES Pharmacists(pharmacistID)
+    FOREIGN KEY (pharmacistID) REFERENCES Pharmacists(pharmacistID),
+    FOREIGN KEY (doctorID) REFERENCES Doctors(doctorID),
+    FOREIGN KEY (patientID) REFERENCES Patients(patientID)
 );
 
 -- Insert patients
 INSERT INTO Patients (patientID, firstName, lastName, dateOfBirth, gender, email, password)
 VALUES 
-  ('a11450f5-dcd5-11ee-a372-4ccc6a43e5c9', 'Ahmet', 'Yılmaz', '1990-01-15', 'Male', 'ahmet.yilmaz@example.com', 'password1'),
-  ('b11450f5-dcd5-11ee-a372-4ccc6a43e5c9', 'Ayşe', 'Kaya', '1992-05-20', 'Female', 'ayse.kaya@example.com', 'password2'),
-  ('c11450f5-dcd5-11ee-a372-4ccc6a43e5c9', 'Mehmet', 'Öztürk', '1985-08-12', 'Male', 'mehmet.ozturk@example.com', 'password3');
+  ('48028060750', 'Ahmet', 'Yılmaz', '1990-01-15', 'Erkek', 'ahmet.yilmaz@example.com', 'password1'),
+  ('48028060751', 'Ayşe', 'Kaya', '1992-05-20', 'Kadın', 'ayse.kaya@example.com', 'password2'),
+  ('48028060752', 'Mehmet', 'Öztürk', '1985-08-12', 'Erkek', 'mehmet.ozturk@example.com', 'password3');
 
 -- Insert Turkish departments
 INSERT INTO Departments (departmentName)
@@ -77,11 +79,11 @@ VALUES
   ('Kardiyoloji');
 
 -- Insert Turkish doctors
-INSERT INTO Doctors (firstName, lastName, gender, departmentID)
+INSERT INTO Doctors (doctorID,firstName, lastName, gender, departmentID)
 VALUES 
-  ('Fatma', 'Demir', 'Female', 1),
-  ('Ali', 'Çelik', 'Male', 2),
-  ('Zeynep', 'Türk', 'Female', 1);
+  ('12345678901','Fatma', 'Demir', 'Kadın', 1),
+  ('12345678902','Ali', 'Çelik', 'Erkek', 2),
+  ('12345678903','Zeynep', 'Türk', 'Kadın', 1);
 
 -- INSERT INTO Appointments (PatientID, DoctorID, DepartmentID, AppointmentDate)
 -- VALUES ('a11450f5-dcd5-11ee-a372-4ccc6a43e5c9', '2', '1', '2024-03-07');
@@ -92,3 +94,57 @@ SELECT * FROM Departments;
 SELECT * FROM Appointments;
 SELECT * FROM Prescriptions;
 SELECT * FROM Pharmacists;
+ 
+ 
+ -- VIEWS
+CREATE VIEW PatientInformation AS SELECT
+ p.patientID,
+ p.firstName,
+ p.lastName,
+ p.dateOfBirth,
+ p.gender,
+ p.email,
+ p.phoneNumber,
+ d.doctorID,
+ CONCAT(d.firstName, ' ', d.lastName) AS doctorName,
+ a.appointmentDate
+ FROM Patients p
+ LEFT JOIN Appointments a ON p.patientID = a.patientID
+ LEFT JOIN Doctors d ON a.doctorID = d.doctorID;
+ CREATE VIEW PrescriptionDetails AS
+ SELECT
+ pr.prescriptionID,
+ pr.medicationDetails,
+ pr.prescriptionDate,
+ p.patientID,
+ CONCAT(p.firstName, ' ', p.lastName) AS patientName,
+ d.doctorID,
+ CONCAT(d.firstName, ' ', d.lastName) AS doctorName
+ FROM Prescriptions pr
+ JOIN Patients p ON pr.patientID = p.patientID
+ JOIN Doctors d ON pr.doctorID = d.doctorID
+ 
+ 
+ -- TRIGGER
+ DELIMITER 
+ 
+ CREATE TRIGGER log_prescription_changes
+ AFTER UPDATE ON Prescriptions
+ FOR EACH ROW
+ BEGIN-- Insert only the medication details and change date
+ INSERT INTO PrescriptionChanges (prescriptionID, medicationDetails, changeDate)
+ VALUES(OLD.prescriptionID, OLD.medicationDetails, NOW());
+ END;
+ 
+ DELIMITER
+ 
+ -- ASSERTION
+ DELIMITER
+ 
+ 
+ DELIMITER //
+ CREATE ASSERTION APPOINTMENT_DATE_CHECK
+ CHECK(-- Check if appointment date is in the future relative to the current date
+ appointmentDate > CURDATE()
+ );
+ DELIMITER ;
