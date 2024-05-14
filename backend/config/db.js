@@ -10,14 +10,20 @@ const config = {
 
 const pool = mysql.createPool(config);
 
-pool
-  .getConnection()
-  .then((connection) => {
+(async () => {
+  try {
+    const connection = await pool.getConnection();
     console.log("Connected to database as ID " + connection.threadId);
     connection.release();
-  })
-  .catch((err) => {
+  } catch (err) {
     console.error("Database connection failed: " + err.stack);
-  });
+    process.exit(1); // Exit the application if database connection fails
+  }
+})();
+
+// Handle pool errors
+pool.on("error", (err) => {
+  console.error("MySQL Pool Error: " + err.stack);
+});
 
 module.exports = pool;

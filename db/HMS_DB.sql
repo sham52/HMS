@@ -49,11 +49,13 @@ CREATE TABLE Pharmacists (
 
 CREATE TABLE Prescriptions (
     prescriptionID VARCHAR(36) PRIMARY KEY DEFAULT (UUID()),
+    doctorID INT,
     appointmentID INT,
     pharmacistID VARCHAR(36),
     prescriptionDate DATE,
     medicationDetails VARCHAR(255),
     FOREIGN KEY (appointmentID) REFERENCES Appointments(appointmentID),
+    FOREIGN KEY (doctorID) REFERENCES Appointments(doctorID),
     FOREIGN KEY (pharmacistID) REFERENCES Pharmacists(pharmacistID)
 );
 

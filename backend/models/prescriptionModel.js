@@ -1,16 +1,10 @@
-class precription {
-  constructor(
-    prescriptionID,
-    visitID,
-    pharmacistID,
-    prescriptionDate,
-    medicationDetails
-  ) {
-    this.prescriptionID = prescriptionID;
-    this.visitID = visitID;
-    this.pharmacistID = pharmacistID;
-    this.prescriptionDate = prescriptionDate;
-    this.medicationDetails = medicationDetails;
-  }
-}
-module.exports = precription;
+const Joi = require("joi");
+
+const prescriptionSchema = Joi.object({
+  appointmentID: Joi.number().integer().required(),
+  pharmacistID: Joi.string().uuid().required(),
+  prescriptionDate: Joi.date().required(),
+  medicationDetails: Joi.string().required(),
+});
+
+module.exports = { prescriptionSchema };
