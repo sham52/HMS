@@ -1,5 +1,5 @@
--- DROP DATABASE IF EXISTS hms;
--- CREATE DATABASE hms;
+DROP DATABASE IF EXISTS hms;
+CREATE DATABASE hms;
 USE hms;
 
 CREATE TABLE Patients (
@@ -9,6 +9,7 @@ CREATE TABLE Patients (
     dateOfBirth DATE NOT NULL,
     gender ENUM('Male', 'Female', 'Other') NOT NULL,
     email VARCHAR(255) UNIQUE,
+    phoneNumber VARCHAR(14) UNIQUE,
     password VARCHAR(255) NOT NULL
 );
 
@@ -26,28 +27,34 @@ CREATE TABLE Doctors (
     FOREIGN KEY (departmentID) REFERENCES Departments(departmentID)
 );
 
-CREATE TABLE Visits (
-    visitID INT AUTO_INCREMENT PRIMARY KEY,
+CREATE TABLE Appointments (
+    appointmentID INT AUTO_INCREMENT PRIMARY KEY,
     patientID VARCHAR(36),
     doctorID INT,
-    visitDate DATE,
+    appointmentDate DATE,
     departmentID INT,
     FOREIGN KEY (patientID) REFERENCES Patients(patientID),
     FOREIGN KEY (doctorID) REFERENCES Doctors(doctorID),
     FOREIGN KEY (departmentID) REFERENCES Departments(departmentID)
 );
 
-CREATE TABLE Prescriptions (
-    prescriptionID VARCHAR(36) PRIMARY KEY DEFAULT (UUID()),
-    visitID INT,
-    prescriptionDate DATE,
-    FOREIGN KEY (visitID) REFERENCES Visits(visitID)
+CREATE TABLE Pharmacists (
+	pharmacistID VARCHAR(36) PRIMARY KEY,
+    firstName VARCHAR(255) NOT NULL,
+    lastName VARCHAR(255) NOT NULL,
+    email VARCHAR(255) UNIQUE,
+    phoneNumber VARCHAR(14) UNIQUE,
+    password VARCHAR(255) NOT NULL
 );
 
-CREATE TABLE Medications (
-    prescriptionID VARCHAR(36),
-    medication VARCHAR(255),
-    FOREIGN KEY (prescriptionID) REFERENCES Prescriptions(prescriptionID)
+CREATE TABLE Prescriptions (
+    prescriptionID VARCHAR(36) PRIMARY KEY DEFAULT (UUID()),
+    appointmentID INT,
+    pharmacistID VARCHAR(36),
+    prescriptionDate DATE,
+    medicationDetails VARCHAR(255),
+    FOREIGN KEY (appointmentID) REFERENCES Appointments(appointmentID),
+    FOREIGN KEY (pharmacistID) REFERENCES Pharmacists(pharmacistID)
 );
 
 -- Insert patients
@@ -74,12 +81,12 @@ VALUES
   ('Ali', 'Çelik', 'Male', 2),
   ('Zeynep', 'Türk', 'Female', 1);
 
--- INSERT INTO Visits (PatientID, DoctorID, DepartmentID, VisitDate)
+-- INSERT INTO Appointments (PatientID, DoctorID, DepartmentID, AppointmentDate)
 -- VALUES ('a11450f5-dcd5-11ee-a372-4ccc6a43e5c9', '2', '1', '2024-03-07');
 
 SELECT * FROM Patients;
 SELECT * FROM Doctors;
 SELECT * FROM Departments;
-SELECT * FROM Visits;
+SELECT * FROM Appointments;
 SELECT * FROM Prescriptions;
-SELECT * FROM Medications;
+SELECT * FROM Pharmacists;

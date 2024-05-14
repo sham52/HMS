@@ -1,4 +1,4 @@
-const mysql = require("mysql2");
+const mysql = require("mysql2/promise");
 require("dotenv").config();
 
 const config = {
@@ -8,14 +8,16 @@ const config = {
   database: process.env.DB_DATABASE,
 };
 
-const connection = mysql.createConnection(config);
+const pool = mysql.createPool(config);
 
-connection.connect((err) => {
-  if (err) {
+pool
+  .getConnection()
+  .then((connection) => {
+    console.log("Connected to database as ID " + connection.threadId);
+    connection.release();
+  })
+  .catch((err) => {
     console.error("Database connection failed: " + err.stack);
-    return;
-  }
-  console.log("Connected to database as ID " + connection.threadId);
-});
+  });
 
-module.exports = connection;
+module.exports = pool;

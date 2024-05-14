@@ -1,7 +1,7 @@
-const bcrypt = require('bcryptjs');
-const jwt = require('jsonwebtoken');
-const { validationResult } = require('express-validator');
-const Patient = require('../models/Patient');
+const bcrypt = require("bcryptjs");
+const jwt = require("jsonwebtoken");
+const { validationResult } = require("express-validator");
+const Patient = require("../models/Patient");
 
 // Register a new patient
 exports.registerPatient = async (req, res) => {
@@ -16,7 +16,7 @@ exports.registerPatient = async (req, res) => {
     let patient = await Patient.findOne({ email });
 
     if (patient) {
-      return res.status(400).json({ msg: 'Patient already exists' });
+      return res.status(400).json({ msg: "Patient already exists" });
     }
 
     patient = new Patient({
@@ -48,7 +48,7 @@ exports.registerPatient = async (req, res) => {
     );
   } catch (err) {
     console.error(err.message);
-    res.status(500).send('Server Error');
+    res.status(500).send("Server Error");
   }
 };
 
@@ -65,13 +65,13 @@ exports.loginPatient = async (req, res) => {
     let patient = await Patient.findOne({ email });
 
     if (!patient) {
-      return res.status(400).json({ msg: 'Invalid Credentials' });
+      return res.status(400).json({ msg: "Invalid Credentials" });
     }
 
     const isMatch = await bcrypt.compare(password, patient.password);
 
     if (!isMatch) {
-      return res.status(400).json({ msg: 'Invalid Credentials' });
+      return res.status(400).json({ msg: "Invalid Credentials" });
     }
 
     const payload = {
@@ -91,6 +91,6 @@ exports.loginPatient = async (req, res) => {
     );
   } catch (err) {
     console.error(err.message);
-    res.status(500).send('Server Error');
+    res.status(500).send("Server Error");
   }
 };

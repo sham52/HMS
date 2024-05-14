@@ -3,6 +3,7 @@ const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const dotenv = require("dotenv");
 const db = require("./db/db");
+const patientModel = require("./models/patientModel");
 
 dotenv.config();
 
@@ -12,13 +13,11 @@ app.use(express.json());
 // Register endpoint
 app.post("/api/register", async (req, res) => {
   const {
-    nationalID,
+    patientID,
     firstName,
     lastName,
     dateOfBirth,
     gender,
-    address,
-    phoneNumber,
     email,
     password,
   } = req.body;
@@ -29,15 +28,13 @@ app.post("/api/register", async (req, res) => {
   try {
     // Insert the user into the database
     await db.query(
-      "INSERT INTO Users (nationalID, firstName, lastName, dateOfBirth, gender, address, phoneNumber, email, password) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)",
+      "INSERT INTO Patients (patientID, firstName, lastName, dateOfBirth, gender, email, password) VALUES (?, ?, ?, ?, ?, ?, ?)",
       [
-        nationalID,
+        patientID,
         firstName,
         lastName,
         dateOfBirth,
         gender,
-        address,
-        phoneNumber,
         email,
         hashedPassword,
       ]
@@ -51,31 +48,31 @@ app.post("/api/register", async (req, res) => {
 
 // Login endpoint
 app.post("/api/login", async (req, res) => {
-  const { nationalID, password } = req.body;
+  const { patientID, password } = req.body;
 
   try {
     // Retrieve the user from the database
-    const results = await db.query("SELECT * FROM Users WHERE nationalID = ?", [
-      nationalID,
-    ]);
+    const results = await db.query(
+      "SELECT * FROM Patients WHERE patientID = ?",
+      [patientID]
+    );
 
     // Check if user exists
-    if (results.length === 0) {
-      return res.status(401).json({ message: "Invalid credentials" });
+    if (results[0][0].length === 0) {
+      return res.status(401).json({ message: "User does not exist" });
     }
 
     // Verify the password
     const passwordMatch = await bcrypt.compare(
       password,
-      results[0].password
+      results[0][0].password
     );
     if (!passwordMatch) {
-      return res.status(401).json({ message: "Invalid credentials" });
+      return res.status(401).json({ message: "Wrong password" });
     }
-
     // Generate JWT token
     const token = jwt.sign(
-      { nationalID: results[0].nationalID },
+      { patientID: results[0][0].patientID },
       process.env.JWT_SECRET
     );
     res.json({ token });

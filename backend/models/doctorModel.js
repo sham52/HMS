@@ -1,48 +1,37 @@
 const { ValidationError } = require("./error");
 
-class patient {
+class doctor {
   constructor(
-    patientID,
+    doctorID,
     firstName,
     lastName,
-    dateOfBirth,
     gender,
-    email,
-    appointments = [],
-    precriptions = []
+    departmentID,
+    appointments = []
   ) {
-    this.patientID = patientID;
+    this.doctorID = doctorID;
     this.firstName = firstName;
     this.lastName = lastName;
-    this.dateOfBirth = dateOfBirth;
     this.gender = gender;
-    this.email = email;
+    this.departmentID = departmentID;
     this.appointments = appointments;
-    this.precriptions = precriptions;
   }
   assignAppointment(appointment) {
     if (!appointments.includes(appointment)) {
       appointments.push(appointment);
     }
   }
-  assignPrescription(precription) {
-    if (!precriptions.includes(precription)) {
-      precriptions.push(precription);
-    }
-  }
 
-  static create(patientData) {
-    const validation = this.validate(patientData);
+  static create(doctorData) {
+    const validation = this.validate(doctorData);
     if (validation === true) {
-      return new patient(
-        patientData.patientID,
-        patientData.firstName,
-        patientData.lastName,
-        patientData.dateOfBirth,
-        patientData.gender,
-        patientData.email,
-        patientData.appointments,
-        patientData.precriptions
+      return new doctor(
+        doctorData.doctorID,
+        doctorData.firstName,
+        doctorData.lastName,
+        doctorData.gender,
+        doctorData.departmentID,
+        doctorData.appointments
       );
     }
     return validation;
@@ -50,8 +39,8 @@ class patient {
 
   static validate(data) {
     const errors = [];
-    if (!this.idNoCheck(data.patientID)) {
-      errors.push(new ValidationError("ID is invalid", data.patientID));
+    if (!this.idNoCheck(data.doctorID)) {
+      errors.push(new ValidationError("ID is invalid", data.doctorID));
     }
     if (!data.firstName) {
       errors.push(
@@ -61,16 +50,13 @@ class patient {
     if (!data.lastName) {
       errors.push(new ValidationError("Last name is required", data.lastName));
     }
-    if (!data.dateOfBirth) {
-      errors.push(
-        new ValidationError("Date of birth is required", data.dateOfBirth)
-      );
-    }
     if (!data.gender) {
       errors.push(new ValidationError("Gender is required", data.gender));
     }
-    if (!data.email) {
-      errors.push(new ValidationError("Email is required", data.email));
+    if (!data.departmentID) {
+      errors.push(
+        new ValidationError("Department ID is required", data.departmentID)
+      );
     }
     if (errors.length > 0) {
       return errors;
@@ -133,4 +119,4 @@ class patient {
   }
 }
 
-module.exports = patient;
+module.exports = doctor;
