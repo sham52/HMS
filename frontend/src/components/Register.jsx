@@ -15,6 +15,9 @@ import { Formik, Form, Field } from "formik";
 import * as Yup from "yup";
 
 const validationSchema = Yup.object().shape({
+  id: Yup.string()
+    .matches(/^[1-9]{1}[0-9]{9}[02468]{1}$/, "Geçersiz T.C. Kimlik Numarası")
+    .required("T.C. Kimlik Numarası gerekli"),
   email: Yup.string()
     .email("Invalid email address")
     .required("Email is required"),
@@ -27,6 +30,9 @@ const validationSchema = Yup.object().shape({
   name: Yup.string()
     .matches(/^[a-zA-ZğüşıöçĞÜŞİÖÇ]+$/, "Name must contain only letters")
     .required("Name is required"),
+  surname: Yup.string()
+    .matches(/^[a-zA-ZğüşıöçĞÜŞİÖÇ]+$/, "Surname must contain only letters")
+    .required("Surname is required"),
   dateOfBirth: Yup.date()
     .max(new Date(), "Date of Birth cannot be in the future")
     .required("Date of Birth is required"),
@@ -48,7 +54,8 @@ const RegisterPage = () => {
 
   const handleSubmit = async (values, actions) => {
     try {
-      const response = await fetch("/api/register", {
+      console.log(`SUBMITTED`);
+      const response = await fetch("http://localhost:3000/register", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -63,6 +70,7 @@ const RegisterPage = () => {
         console.error("Registration failed");
         // You can display an error message to the user if needed
       }
+      console.log(`submitted`);
     } catch (error) {
       console.error("Error registering user:", error);
       // You can display an error message to the user if needed
@@ -86,10 +94,12 @@ const RegisterPage = () => {
       >
         <Formik
           initialValues={{
+            id: "",
             email: "",
             password: "",
             confirmPassword: "",
             name: "",
+            surname: "",
             dateOfBirth: "",
             gender: "",
             address: "",
@@ -100,15 +110,43 @@ const RegisterPage = () => {
         >
           {(props) => (
             <Form>
+              <Field name="id">
+                {({ field, form }) => (
+                  <FormControl
+                    mt={4}
+                    isInvalid={form.errors.id && form.touched.id}
+                  >
+                    <FormLabel htmlFor="id">T.C.</FormLabel>
+                    <Input
+                      {...field}
+                      id="id"
+                      placeholder="T.C. Kimlik Numarası"
+                    />
+                    <FormErrorMessage>{form.errors.id}</FormErrorMessage>
+                  </FormControl>
+                )}
+              </Field>
               <Field name="name">
                 {({ field, form }) => (
                   <FormControl
                     mt={4}
                     isInvalid={form.errors.name && form.touched.name}
                   >
-                    <FormLabel htmlFor="name">Name</FormLabel>
-                    <Input {...field} id="name" placeholder="Name" />
+                    <FormLabel htmlFor="name">İsim</FormLabel>
+                    <Input {...field} id="name" placeholder="İsim" />
                     <FormErrorMessage>{form.errors.name}</FormErrorMessage>
+                  </FormControl>
+                )}
+              </Field>
+              <Field name="surname">
+                {({ field, form }) => (
+                  <FormControl
+                    mt={4}
+                    isInvalid={form.errors.surname && form.touched.surname}
+                  >
+                    <FormLabel htmlFor="surname">Soyisim</FormLabel>
+                    <Input {...field} id="surname" placeholder="Soyisim" />
+                    <FormErrorMessage>{form.errors.surname}</FormErrorMessage>
                   </FormControl>
                 )}
               </Field>
@@ -141,9 +179,9 @@ const RegisterPage = () => {
                   >
                     <FormLabel htmlFor="gender">Gender</FormLabel>
                     <Select {...field} id="gender" placeholder="Select Gender">
-                      <option value="male">Male</option>
-                      <option value="female">Female</option>
-                      <option value="other">Other</option>
+                      <option value="male">Erkek</option>
+                      <option value="female">Kadın</option>
+                      <option value="other">Diğer</option>
                     </Select>
                     <FormErrorMessage>{form.errors.gender}</FormErrorMessage>
                   </FormControl>

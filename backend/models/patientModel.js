@@ -1,5 +1,6 @@
 const Joi = require("joi");
 const patientSchema = Joi.object({
+  patientID: Joi.string().required(),
   firstName: Joi.string().required(),
   lastName: Joi.string().required(),
   dateOfBirth: Joi.date().required(),
@@ -9,4 +10,4 @@ const patientSchema = Joi.object({
   password: Joi.string().required(),
 });
 
-module.exports =  { patientSchema };
+module.exports = { patientSchema };

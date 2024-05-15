@@ -7,7 +7,9 @@ async function createPatient(req, res) {
     if (error) {
       return res.status(400).json({ message: error.details[0].message });
     }
+
     const {
+      patientID,
       firstName,
       lastName,
       dateOfBirth,
@@ -18,12 +20,21 @@ async function createPatient(req, res) {
     } = req.body;
     // Insert new patient into the database
     const result = await pool.query(
-      "INSERT INTO Patients (firstName, lastName, dateOfBirth, gender, email, phoneNumber, password) VALUES (?, ?, ?, ?, ?, ?, ?)",
-      [firstName, lastName, dateOfBirth, gender, email, phoneNumber, password]
+      "INSERT INTO Patients (patientID,firstName, lastName, dateOfBirth, gender, email, phoneNumber, password) VALUES (?, ?, ?, ?, ?, ?, ?,?)",
+      [
+        patientID,
+        firstName,
+        lastName,
+        dateOfBirth,
+        gender,
+        email,
+        phoneNumber,
+        password,
+      ]
     );
     res.json({
       message: "Patient created successfully",
-      patientID: result.insertId,
+      patientID: result,
     });
   } catch (err) {
     console.error(err);

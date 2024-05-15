@@ -1,4 +1,7 @@
-const { getAllPatients } = require("../controllers/patientController");
+const {
+  getAllPatients,
+  createPatient,
+} = require("../controllers/patientController");
 const { getAllAppointments } = require("../controllers/appointmentController");
 const { getAllDepartments } = require("../controllers/departmentController");
 const {
@@ -11,6 +14,7 @@ const router = express.Router();
 
 // Patients routes
 router.get("/patients", getAllPatients);
+router.post("/patients", createPatient);
 
 // Doctors routes
 router.get("/doctors", getAllDoctors);

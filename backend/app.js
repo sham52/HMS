@@ -5,6 +5,7 @@ const pool = require("./config/db");
 const app = express();
 
 // Use the routes defined in routes.js
+app.use(express.json()); // Add this line
 app.use(router);
 
 const PORT = process.env.PORT || 3000;
