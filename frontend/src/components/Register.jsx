@@ -158,12 +158,12 @@ const RegisterPage = () => {
                       form.errors.dateOfBirth && form.touched.dateOfBirth
                     }
                   >
-                    <FormLabel htmlFor="dateOfBirth">Date of Birth</FormLabel>
+                    <FormLabel htmlFor="dateOfBirth">Doğum Tarihi</FormLabel>
                     <Input
                       {...field}
                       type="date"
                       id="dateOfBirth"
-                      placeholder="Date of Birth"
+                      placeholder="Doğum Tarihi"
                     />
                     <FormErrorMessage>
                       {form.errors.dateOfBirth}
@@ -177,8 +177,12 @@ const RegisterPage = () => {
                     mt={4}
                     isInvalid={form.errors.gender && form.touched.gender}
                   >
-                    <FormLabel htmlFor="gender">Gender</FormLabel>
-                    <Select {...field} id="gender" placeholder="Select Gender">
+                    <FormLabel htmlFor="gender">Cinsiyet</FormLabel>
+                    <Select
+                      {...field}
+                      id="gender"
+                      placeholder="Cinsiyetinzi Seçin"
+                    >
                       <option value="male">Erkek</option>
                       <option value="female">Kadın</option>
                       <option value="other">Diğer</option>
@@ -193,8 +197,8 @@ const RegisterPage = () => {
                     mt={4}
                     isInvalid={form.errors.address && form.touched.address}
                   >
-                    <FormLabel htmlFor="address">Address</FormLabel>
-                    <Input {...field} id="address" placeholder="Address" />
+                    <FormLabel htmlFor="address">Adres</FormLabel>
+                    <Input {...field} id="address" placeholder="Adres" />
                     <FormErrorMessage>{form.errors.address}</FormErrorMessage>
                   </FormControl>
                 )}
@@ -207,11 +211,13 @@ const RegisterPage = () => {
                       form.errors.phoneNumber && form.touched.phoneNumber
                     }
                   >
-                    <FormLabel htmlFor="phoneNumber">Phone Number</FormLabel>
+                    <FormLabel htmlFor="phoneNumber">
+                      Telefon Numarası
+                    </FormLabel>
                     <Input
                       {...field}
                       id="phoneNumber"
-                      placeholder="Phone Number"
+                      placeholder="Telefon Numarası"
                     />
                     <FormErrorMessage>
                       {form.errors.phoneNumber}
@@ -231,7 +237,7 @@ const RegisterPage = () => {
               </Button>
               <Box mt={4}>
                 <Link href="/login">
-                  You already have an account? Login here!
+                  Zaten bir hesabın var mı? Hemen Giriş yap!
                 </Link>
               </Box>
             </Form>
