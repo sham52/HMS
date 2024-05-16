@@ -13,10 +13,10 @@ import { Formik, Form, Field } from "formik";
 import * as Yup from "yup";
 
 const validationSchema = Yup.object().shape({
-  email: Yup.string()
-    .email("Invalid email address")
-    .required("Email is required"),
-  password: Yup.string().required("Password is required"),
+  id: Yup.string()
+    .matches(/^[1-9]{1}[0-9]{9}[02468]{1}$/, "Geçersiz T.C. Kimlik Numarası")
+    .required("T.C. Kimlik Numarası gerekli"),
+  password: Yup.string().required("Şifre gerekli"),
 });
 
 const LoginPage = () => {
@@ -37,20 +37,22 @@ const LoginPage = () => {
         borderRadius="md"
       >
         <Formik
-          initialValues={{ email: "", password: "" }}
+          initialValues={{ id: "", password: "" }}
           validationSchema={validationSchema}
           onSubmit={handleSubmit}
         >
           {(props) => (
             <Form>
-              <Field name="email">
+              <Field name="id">
                 {({ field, form }) => (
-                  <FormControl
-                    isInvalid={form.errors.email && form.touched.email}
-                  >
-                    <FormLabel htmlFor="email">Email Address</FormLabel>
-                    <Input {...field} id="email" placeholder="Email Address" />
-                    <FormErrorMessage>{form.errors.email}</FormErrorMessage>
+                  <FormControl isInvalid={form.errors.id && form.touched.id}>
+                    <FormLabel htmlFor="id">T.C. Kimlik Numarası</FormLabel>
+                    <Input
+                      {...field}
+                      id="id"
+                      placeholder="T.C Kimlik Numarası"
+                    />
+                    <FormErrorMessage>{form.errors.id}</FormErrorMessage>
                   </FormControl>
                 )}
               </Field>
@@ -60,12 +62,12 @@ const LoginPage = () => {
                     mt={4}
                     isInvalid={form.errors.password && form.touched.password}
                   >
-                    <FormLabel htmlFor="password">Password</FormLabel>
+                    <FormLabel htmlFor="password">Şifre</FormLabel>
                     <Input
                       {...field}
                       type="password"
                       id="password"
-                      placeholder="Password"
+                      placeholder="Şifre"
                     />
                     <FormErrorMessage>{form.errors.password}</FormErrorMessage>
                   </FormControl>

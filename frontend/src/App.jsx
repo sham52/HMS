@@ -7,11 +7,11 @@ import Home from "./components/Home";
 import Register from "./components/Register";
 import Protected from "./components/Protected";
 import Main from "./components/Main";
+import PatientMain from "./components/Main";
 
 const App = () => {
-  const [authToken, setAuthToken] = useState(true);+
-  
-  useEffect(() => {
+  const [authToken, setAuthToken] = useState(true);
+  +useEffect(() => {
     console.log("States", authToken);
   }, [authToken]);
 
@@ -22,13 +22,14 @@ const App = () => {
         <Route
           path="/main"
           element={
-            <Protected authToken={authToken}>
-              <Main />
-            </Protected>
+            // <Protected authToken={authToken}>
+            <Main />
+            // </Protected>
           }
         />
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
+        <Route path="/patient-main" element={<PatientMain />} />
       </Routes>
     </>
   );

@@ -1,7 +1,7 @@
 const pool = require("../config/db");
 const { patientSchema } = require("../models/patientModel.js");
 
-async function createPatient(req, res) {
+const createPatient = async (req, res) => {
   try {
     const { error } = patientSchema.validate(req.body);
     if (error) {
@@ -18,9 +18,10 @@ async function createPatient(req, res) {
       phoneNumber,
       password,
     } = req.body;
+
     // Insert new patient into the database
     const result = await pool.query(
-      "INSERT INTO Patients (patientID,firstName, lastName, dateOfBirth, gender, email, phoneNumber, password) VALUES (?, ?, ?, ?, ?, ?, ?,?)",
+      "INSERT INTO Patients (patientID, firstName, lastName, dateOfBirth, gender, email, phoneNumber, password) VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
       [
         patientID,
         firstName,
@@ -32,15 +33,16 @@ async function createPatient(req, res) {
         password,
       ]
     );
+
     res.json({
       message: "Patient created successfully",
-      patientID: result,
+      patientID: result.insertId,
     });
   } catch (err) {
     console.error(err);
     res.status(500).json({ message: "Server Error" });
   }
-}
+};
 
 async function updatePatient(req, res) {
   try {

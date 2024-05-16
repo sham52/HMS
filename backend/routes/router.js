@@ -1,13 +1,33 @@
 const {
   getAllPatients,
   createPatient,
+  updatePatient,
+  deletePatient,
 } = require("../controllers/patientController");
-const { getAllAppointments } = require("../controllers/appointmentController");
-const { getAllDepartments } = require("../controllers/departmentController");
+const {
+  getAllAppointments,
+  createAppointment,
+  updateAppointment,
+  deleteAppointment,
+} = require("../controllers/appointmentController");
+const {
+  getAllDepartments,
+  createDepartment,
+  updateDepartment,
+  deleteDepartment,
+} = require("../controllers/departmentController");
 const {
   getAllPrescriptions,
+  createPrescription,
+  updatePrescription,
+  deletePrescription,
 } = require("../controllers/prescriptionController");
-const { getAllDoctors } = require("../controllers/doctorContoller");
+const {
+  getAllDoctors,
+  createDoctor,
+  updateDoctor,
+  deleteDoctor,
+} = require("../controllers/doctorContoller");
 
 const express = require("express");
 const router = express.Router();
@@ -15,18 +35,32 @@ const router = express.Router();
 // Patients routes
 router.get("/patients", getAllPatients);
 router.post("/patients", createPatient);
+router.put("/patients", updatePatient);
+router.delete("/patients", deletePatient);
 
 // Doctors routes
 router.get("/doctors", getAllDoctors);
+router.post("/doctors", createDoctor);
+router.put("/doctors", updateDoctor);
+router.delete("/doctors", deleteDoctor);
 
 // Appointments routes
 router.get("/appointments", getAllAppointments);
-// Add other routes for appointments as needed
+router.post("/appointments", createAppointment);
+router.put("/appointments", updateAppointment);
+router.delete("/appointments", deleteAppointment);
+
 // Departments routes
 router.get("/departments", getAllDepartments);
-// Add other routes for departments as needed
+router.post("/departments", createDepartment);
+router.put("/departments", updateDepartment);
+router.delete("/departments", deleteDepartment);
+
 // Prescriptions routes
 router.get("/prescriptions", getAllPrescriptions);
-// Add other routes for prescriptions as needed
+router.post("/prescriptions", createPrescription);
+router.put("/prescriptions", updatePrescription);
+router.delete("/prescriptions", deletePrescription);
+
 
 module.exports = router;

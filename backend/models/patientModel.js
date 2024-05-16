@@ -4,9 +4,9 @@ const patientSchema = Joi.object({
   firstName: Joi.string().required(),
   lastName: Joi.string().required(),
   dateOfBirth: Joi.date().required(),
-  gender: Joi.string().valid("Male", "Female", "Other").required(),
-  email: Joi.string().email().required(),
-  phoneNumber: Joi.string().required(),
+  gender: Joi.string().valid("Erkek", "Kadın", "Diğer").required(),
+  email: Joi.string().email(),
+  phoneNumber: Joi.string(),
   password: Joi.string().required(),
 });
 

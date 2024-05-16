@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-
+import { useNavigate } from "react-router-dom";
 import {
   ChakraProvider,
   Box,
@@ -10,58 +10,72 @@ import {
   FormErrorMessage,
   Select,
   Link,
+  Flex,
 } from "@chakra-ui/react";
 import { Formik, Form, Field } from "formik";
+
 import * as Yup from "yup";
 
 const validationSchema = Yup.object().shape({
   id: Yup.string()
     .matches(/^[1-9]{1}[0-9]{9}[02468]{1}$/, "Geçersiz T.C. Kimlik Numarası")
     .required("T.C. Kimlik Numarası gerekli"),
-  email: Yup.string()
-    .email("Invalid email address")
-    .required("Email is required"),
+  firstName: Yup.string()
+    .matches(/^[a-zA-ZğüşıöçĞÜŞİÖÇ\s]+$/, "İsim özel karakter içeremez")
+    .required("İsim gerekli"),
   password: Yup.string()
-    .required("Password is required")
-    .min(6, "Password must be at least 6 characters"),
+    .required("Şifre gerekli")
+    .min(6, "Şifre en az 6 karakterden oluşmalı"),
   confirmPassword: Yup.string()
-    .oneOf([Yup.ref("password"), null], "Passwords must match")
-    .required("Confirm Password is required"),
-  name: Yup.string()
-    .matches(/^[a-zA-ZğüşıöçĞÜŞİÖÇ]+$/, "Name must contain only letters")
-    .required("Name is required"),
-  surname: Yup.string()
-    .matches(/^[a-zA-ZğüşıöçĞÜŞİÖÇ]+$/, "Surname must contain only letters")
-    .required("Surname is required"),
+    .oneOf([Yup.ref("password"), null], "Şifreler eşleşmeli")
+    .required("Şifre kontrol gerekli"),
+  lastName: Yup.string()
+    .matches(/^[a-zA-ZğüşıöçĞÜŞİÖÇ\s]+$/, "Soyisim özel karakter içeremez")
+    .required("Soyisim gerekli"),
   dateOfBirth: Yup.date()
-    .max(new Date(), "Date of Birth cannot be in the future")
-    .required("Date of Birth is required"),
-  gender: Yup.string().required("Gender is required"),
-  address: Yup.string().required("Address is required"),
+    .max(new Date(), "Doğum tarihi gelecek bir tarih olamaz")
+    .required("Doğum tarihi gerekli"),
+  gender: Yup.string().required("Cinsiyet gerekli"),
   phoneNumber: Yup.string()
     .matches(
       /^[0-9]{3}[0-9]{3}[0-9]{4}$/,
-      "Phone Number must be in the format XXXXXXXXXX"
+      "Telefon numarası XXX XXX XX XX formatında olmalı"
     )
     .transform((value, originalValue) => {
       // Remove all spaces from the phone number
       return originalValue.replace(/\s/g, "");
-    })
-    .required("Phone Number is required"),
+    }),
+  email: Yup.string().email("Geçerli bir e-posta adresi girin"),
 });
 const RegisterPage = () => {
   const [isRegistered, setIsRegistered] = useState(false);
+  const navigate = useNavigate();
 
   const handleSubmit = async (values, actions) => {
     try {
       console.log(`SUBMITTED`);
-      const response = await fetch("http://localhost:3000/register", {
+
+      const requestBody = {
+        patientID: values.id,
+        firstName: values.firstName,
+        lastName: values.lastName,
+        dateOfBirth: values.dateOfBirth,
+        gender: values.gender,
+        email: values.email,
+        phoneNumber: values.phoneNumber,
+        password: values.password,
+      };
+      console.log(requestBody);
+      const response = await fetch("http://localhost:3000/patients", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify(values),
+        body: JSON.stringify(requestBody),
       });
+      const data = await response.json(); // Read the response body as JSON
+      console.log(data);
+
       if (response.ok) {
         // Registration successful, set isRegistered to true
         setIsRegistered(true);
@@ -79,7 +93,7 @@ const RegisterPage = () => {
     }
   };
   if (isRegistered) {
-    return <Redirect to="/main" />;
+    return navigate("/patient-main");
   }
   return (
     <ChakraProvider>
@@ -87,23 +101,24 @@ const RegisterPage = () => {
         p={8}
         maxW="md"
         mx="auto"
-        mt="13vh" // Adjust the top margin to center vertically
+        mt="7vh"
         boxShadow="md"
         borderWidth="1px"
         borderRadius="md"
+        display="flex"
+        flexDirection="column"
       >
         <Formik
           initialValues={{
             id: "",
-            email: "",
-            password: "",
-            confirmPassword: "",
-            name: "",
-            surname: "",
+            firstName: "",
+            lastName: "",
             dateOfBirth: "",
             gender: "",
-            address: "",
+            email: "",
             phoneNumber: "",
+            password: "",
+            confirmPassword: "",
           }}
           validationSchema={validationSchema}
           onSubmit={handleSubmit}
@@ -126,30 +141,41 @@ const RegisterPage = () => {
                   </FormControl>
                 )}
               </Field>
-              <Field name="name">
-                {({ field, form }) => (
-                  <FormControl
-                    mt={4}
-                    isInvalid={form.errors.name && form.touched.name}
-                  >
-                    <FormLabel htmlFor="name">İsim</FormLabel>
-                    <Input {...field} id="name" placeholder="İsim" />
-                    <FormErrorMessage>{form.errors.name}</FormErrorMessage>
-                  </FormControl>
-                )}
-              </Field>
-              <Field name="surname">
-                {({ field, form }) => (
-                  <FormControl
-                    mt={4}
-                    isInvalid={form.errors.surname && form.touched.surname}
-                  >
-                    <FormLabel htmlFor="surname">Soyisim</FormLabel>
-                    <Input {...field} id="surname" placeholder="Soyisim" />
-                    <FormErrorMessage>{form.errors.surname}</FormErrorMessage>
-                  </FormControl>
-                )}
-              </Field>
+              <Flex direction="row">
+                <Field name="firstName">
+                  {({ field, form }) => (
+                    <FormControl
+                      mt={4}
+                      mr={2}
+                      flex={2}
+                      isInvalid={
+                        form.errors.firstName && form.touched.firstName
+                      }
+                    >
+                      <FormLabel htmlFor="firstName">İsim</FormLabel>
+                      <Input {...field} id="firstName" placeholder="İsim" />
+                      <FormErrorMessage>
+                        {form.errors.firstName}
+                      </FormErrorMessage>
+                    </FormControl>
+                  )}
+                </Field>
+                <Field name="lastName">
+                  {({ field, form }) => (
+                    <FormControl
+                      mt={4}
+                      flex={3}
+                      isInvalid={form.errors.lastName && form.touched.lastName}
+                    >
+                      <FormLabel htmlFor="lastName">Soyisim</FormLabel>
+                      <Input {...field} id="lastName" placeholder="Soyisim" />
+                      <FormErrorMessage>
+                        {form.errors.lastName}
+                      </FormErrorMessage>
+                    </FormControl>
+                  )}
+                </Field>
+              </Flex>
               <Field name="dateOfBirth">
                 {({ field, form }) => (
                   <FormControl
@@ -181,28 +207,29 @@ const RegisterPage = () => {
                     <Select
                       {...field}
                       id="gender"
-                      placeholder="Cinsiyetinzi Seçin"
+                      placeholder="Cinsiyetinizi Seçin"
                     >
-                      <option value="male">Erkek</option>
-                      <option value="female">Kadın</option>
-                      <option value="other">Diğer</option>
+                      <option value="Erkek">Erkek</option>
+                      <option value="Kadın">Kadın</option>
+                      <option value="Diğer">Diğer</option>
                     </Select>
                     <FormErrorMessage>{form.errors.gender}</FormErrorMessage>
                   </FormControl>
                 )}
               </Field>
-              <Field name="address">
+              <Field name="email">
                 {({ field, form }) => (
                   <FormControl
                     mt={4}
-                    isInvalid={form.errors.address && form.touched.address}
+                    isInvalid={form.errors.email && form.touched.email}
                   >
-                    <FormLabel htmlFor="address">Adres</FormLabel>
-                    <Input {...field} id="address" placeholder="Adres" />
-                    <FormErrorMessage>{form.errors.address}</FormErrorMessage>
+                    <FormLabel htmlFor="email">E-posta</FormLabel>
+                    <Input {...field} id="email" placeholder="E-posta" />
+                    <FormErrorMessage>{form.errors.email}</FormErrorMessage>
                   </FormControl>
                 )}
               </Field>
+
               <Field name="phoneNumber">
                 {({ field, form }) => (
                   <FormControl
@@ -225,6 +252,48 @@ const RegisterPage = () => {
                   </FormControl>
                 )}
               </Field>
+              <Field name="password">
+                {({ field, form }) => (
+                  <FormControl
+                    mt={4}
+                    isInvalid={form.errors.password && form.touched.password}
+                  >
+                    <FormLabel htmlFor="password">Şifre</FormLabel>
+                    <Input
+                      {...field}
+                      id="password"
+                      type="password"
+                      placeholder="Şifre"
+                    />
+                    <FormErrorMessage>{form.errors.password}</FormErrorMessage>
+                  </FormControl>
+                )}
+              </Field>
+              <Field name="confirmPassword">
+                {({ field, form }) => (
+                  <FormControl
+                    mt={4}
+                    isInvalid={
+                      form.errors.confirmPassword &&
+                      form.touched.confirmPassword
+                    }
+                  >
+                    <FormLabel htmlFor="confirmPassword">
+                      Şifreyi Onayla
+                    </FormLabel>
+                    <Input
+                      {...field}
+                      id="confirmPassword"
+                      type="password"
+                      placeholder="Şifreyi Onayla"
+                    />
+                    <FormErrorMessage>
+                      {form.errors.confirmPassword}
+                    </FormErrorMessage>
+                  </FormControl>
+                )}
+              </Field>
+
               {/* Add other fields as needed */}
               <Button
                 type="submit"
@@ -233,7 +302,7 @@ const RegisterPage = () => {
                 isLoading={props.isSubmitting}
                 width="100%"
               >
-                Register
+                Kayıt Ol
               </Button>
               <Box mt={4}>
                 <Link href="/login">
