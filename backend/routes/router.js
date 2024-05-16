@@ -32,6 +32,9 @@ const {
 const express = require("express");
 const router = express.Router();
 
+//login process
+router.get("/login",)
+
 // Patients routes
 router.get("/patients", getAllPatients);
 router.post("/patients", createPatient);

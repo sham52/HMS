@@ -22,7 +22,7 @@ const validationSchema = Yup.object().shape({
 const LoginPage = () => {
   const handleSubmit = async (values, actions) => {
     try {
-      const response = await fetch("your_login_endpoint_here", {
+      const response = await fetch("http://localhost:3000/login", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

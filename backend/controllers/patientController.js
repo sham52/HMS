@@ -24,20 +24,46 @@ const createPatient = async (req, res) => {
 
     const hashedPassword = await bcrypt.hash(password, saltRounds);
 
+    let query =
+      "INSERT INTO Patients (patientID, firstName, lastName, dateOfBirth, gender, password";
+    let values = [
+      patientID,
+      firstName,
+      lastName,
+      dateOfBirth,
+      gender,
+      hashedPassword,
+    ];
+
+    if (email) {
+      query += ", email";
+      values.push(email);
+    }
+    if (phoneNumber) {
+      query += ", phoneNumber";
+      values.push(phoneNumber);
+    }
+
+    query += ") VALUES (?, ?, ?, ?, ?, ";
+    if (email) query += "?, ";
+    if (phoneNumber) query += "?, ";
+    query += "?)";
+
+    const result = await pool.query(query, values);
     // Insert new patient into the database
-    const result = await pool.query(
-      "INSERT INTO Patients (patientID, firstName, lastName, dateOfBirth, gender, email, phoneNumber, password) VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
-      [
-        patientID,
-        firstName,
-        lastName,
-        dateOfBirth,
-        gender,
-        email,
-        phoneNumber,
-        hashedPassword,
-      ]
-    );
+    // const result = await pool.query(
+    //   "INSERT INTO Patients (patientID, firstName, lastName, dateOfBirth, gender, email, phoneNumber, password) VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
+    //   [
+    //     patientID,
+    //     firstName,
+    //     lastName,
+    //     dateOfBirth,
+    //     gender,
+    //     email,
+    //     phoneNumber,
+    //     hashedPassword,
+    //   ]
+    // );
 
     // Create and send the token
     const token = jwt.sign(

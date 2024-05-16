@@ -53,18 +53,21 @@ const RegisterPage = () => {
 
   const handleSubmit = async (values, actions) => {
     try {
-      console.log(`SUBMITTED`);
-
       const requestBody = {
         patientID: values.id,
         firstName: values.firstName,
         lastName: values.lastName,
         dateOfBirth: values.dateOfBirth,
         gender: values.gender,
-        email: values.email,
-        phoneNumber: values.phoneNumber,
         password: values.password,
       };
+      if (values.email) {
+        requestBody.email = values.email;
+      }
+
+      if (values.phoneNumber) {
+        requestBody.phoneNumber = values.phoneNumber;
+      }
       console.log(requestBody);
       const response = await fetch("http://localhost:3000/patients", {
         method: "POST",
@@ -73,10 +76,12 @@ const RegisterPage = () => {
         },
         body: JSON.stringify(requestBody),
       });
-      const data = await response.json(); // Read the response body as JSON
-      console.log(data);
 
-      if (response.ok) {
+      const data = await response.json(); // Read the response body as JSON
+      console.log("RESPONSE", data.token);
+
+      document.cookie = `authToken=${data.token};path=/`;
+      if (data.token) {
         // Registration successful, set isRegistered to true
         setIsRegistered(true);
       } else {
@@ -92,6 +97,7 @@ const RegisterPage = () => {
       actions.setSubmitting(false);
     }
   };
+
   if (isRegistered) {
     return navigate("/patient-main");
   }

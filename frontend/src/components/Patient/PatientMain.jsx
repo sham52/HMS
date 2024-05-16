@@ -16,7 +16,7 @@ import {
   ChevronRightIcon,
   MoonIcon,
   SunIcon,
-} from '@chakra-ui/icons';
+} from "@chakra-ui/icons";
 
 const PatientMain = () => {
   const [patientData, setPatientData] = useState([]);
@@ -29,8 +29,8 @@ const PatientMain = () => {
         </Box>
         <Spacer />
         <Box>
-          <IconButton aria-label="Settings" icon={<SettingsIcon />} />
-          <IconButton aria-label="Search database" icon={<SearchIcon />} />
+          {/* <IconButton aria-label="Settings" icon={<SettingsIcon />} />
+          <IconButton aria-label="Search database" icon={<SearchIcon />} /> */}
 
           <Avatar src="https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_960_720.png" />
         </Box>
