@@ -24,7 +24,7 @@ const App = () => {
   useEffect(() => {
     const authTokenFromCookie = getAuthTokenFromCookie();
     if (!authTokenFromCookie) {
-      navigate("/login");
+      return;
     } else {
       setAuthToken(authTokenFromCookie);
     }
