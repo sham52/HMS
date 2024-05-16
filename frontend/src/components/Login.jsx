@@ -1,4 +1,5 @@
 import React from "react";
+import { useNavigate } from "react-router-dom";
 import {
   ChakraProvider,
   Box,
@@ -20,9 +21,10 @@ const validationSchema = Yup.object().shape({
 });
 
 const Login = () => {
+  const navigate = useNavigate();
   const handleSubmit = async (values, actions) => {
     try {
-      const responseBody = await {
+      const responseBody = {
         id: values.id,
         password: values.password,
       };
@@ -34,14 +36,17 @@ const Login = () => {
         },
         body: JSON.stringify(responseBody),
       });
-      console.log(response);
-      if (response.token) {
-        // Login successful, redirect to main page or set a flag to indicate the user is logged in
-        console.log("Login successful");
-        // Redirect or set a flag here
-        document.cookie = `authToken=${response.token};path=/`;
+
+      if (response.status === 200) {
+        const data = await response.json();
+        if (data.token) {
+          console.log("Login successful");
+          document.cookie = `authToken=${data.token};path=/`;
+        } else {
+          console.error("Login failed");
+          // You can display an error message to the user if needed
+        }
       } else {
-        // Login failed, handle error
         console.error("Login failed");
         // You can display an error message to the user if needed
       }
@@ -52,7 +57,6 @@ const Login = () => {
       actions.setSubmitting(false);
     }
   };
-
   return (
     <ChakraProvider>
       <Box

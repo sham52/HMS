@@ -50,20 +50,6 @@ const createPatient = async (req, res) => {
     query += "?)";
 
     const result = await pool.query(query, values);
-    // Insert new patient into the database
-    // const result = await pool.query(
-    //   "INSERT INTO Patients (patientID, firstName, lastName, dateOfBirth, gender, email, phoneNumber, password) VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
-    //   [
-    //     patientID,
-    //     firstName,
-    //     lastName,
-    //     dateOfBirth,
-    //     gender,
-    //     email,
-    //     phoneNumber,
-    //     hashedPassword,
-    //   ]
-    // );
 
     // Create and send the token
     const token = jwt.sign(

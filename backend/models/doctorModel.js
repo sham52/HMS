@@ -7,4 +7,4 @@ const doctorSchema = Joi.object({
   departmentID: Joi.number().integer().required(),
 });
 
-module.exports =  { doctorSchema };
+module.exports = { doctorSchema };

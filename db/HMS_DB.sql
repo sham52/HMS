@@ -1,7 +1,5 @@
 DROP DATABASE IF EXISTS hms;
-
 CREATE DATABASE hms;
-
 USE hms;
 
 CREATE TABLE Patients (
@@ -42,7 +40,6 @@ CREATE TABLE Pharmacists (
 );
 
 
-
 CREATE TABLE Appointments (
     appointmentID INT AUTO_INCREMENT PRIMARY KEY,
     appointmentDate DATE,
@@ -69,7 +66,7 @@ CREATE TABLE Prescriptions (
     FOREIGN KEY (patientID) REFERENCES Patients(patientID)
 );
 
--- Doctors
+
 
 -- Patients
 INSERT INTO Patients (patientID, firstName, lastName, dateOfBirth, gender, email, phoneNumber, password) VALUES
@@ -98,6 +95,7 @@ VALUES
     ('Göz Hastalıkları'),
     ('Kardiyoloji');
 
+-- Doctors
 INSERT INTO Doctors (doctorID, firstName, lastName, dateOfBirth, gender, email, phoneNumber, password, departmentID) VALUES
 ('12345678901', 'Ahmet', 'Yılmaz', '1980-05-15', 'Erkek', 'ahmet.yilmaz@example.com', '5551234567', 'password123', 1),
 ('23456789012', 'Ayşe', 'Kaya', '1975-08-20', 'Kadın', 'ayse.kaya@example.com', '5552345678', 'password123', 2),

@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigation } from "react-router-dom";
 import {
   ChakraProvider,
   Box,
@@ -49,7 +49,7 @@ const validationSchema = Yup.object().shape({
 });
 const RegisterPage = () => {
   const [isRegistered, setIsRegistered] = useState(false);
-  const navigate = useNavigate();
+  const navigate = useNavigation();
 
   const handleSubmit = async (values, actions) => {
     try {
@@ -83,6 +83,7 @@ const RegisterPage = () => {
       document.cookie = `authToken=${data.token};path=/`;
       if (data.token) {
         // Registration successful, set isRegistered to true
+        navigate("/patient-main");
         setIsRegistered(true);
       } else {
         // Registration failed, handle error
