@@ -7,7 +7,7 @@ import Home from "./components/Home";
 import Register from "./components/Register";
 import Protected from "./components/Protected";
 import Main from "./components/Main";
-import PatientMain from "./components/Main";
+import PatientMain from "./components/Patient/PatientMain";
 
 const App = () => {
   const [authToken, setAuthToken] = useState(true);

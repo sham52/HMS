@@ -62,5 +62,4 @@ router.post("/prescriptions", createPrescription);
 router.put("/prescriptions", updatePrescription);
 router.delete("/prescriptions", deletePrescription);
 
-
 module.exports = router;

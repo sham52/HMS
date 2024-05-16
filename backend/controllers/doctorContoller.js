@@ -1,5 +1,8 @@
 const pool = require("../config/db");
 const { doctorSchema } = require("../models/doctorModel");
+const bcrypt = require("bcrypt");
+const saltRounds = 10;
+
 
 async function createDoctor(req, res) {
   try {

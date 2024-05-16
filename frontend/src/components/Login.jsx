@@ -20,9 +20,30 @@ const validationSchema = Yup.object().shape({
 });
 
 const LoginPage = () => {
-  const handleSubmit = (values, actions) => {
-    console.log(values);
-    actions.setSubmitting(false);
+  const handleSubmit = async (values, actions) => {
+    try {
+      const response = await fetch("your_login_endpoint_here", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(values),
+      });
+      if (response.ok) {
+        // Login successful, redirect to main page or set a flag to indicate the user is logged in
+        console.log("Login successful");
+        // Redirect or set a flag here
+      } else {
+        // Login failed, handle error
+        console.error("Login failed");
+        // You can display an error message to the user if needed
+      }
+    } catch (error) {
+      console.error("Error logging in:", error);
+      // You can display an error message to the user if needed
+    } finally {
+      actions.setSubmitting(false);
+    }
   };
 
   return (
@@ -31,7 +52,7 @@ const LoginPage = () => {
         p={8}
         maxW="md"
         mx="auto"
-        mt="23vh" // Adjust the top margin to center vertically
+        mt="23vh"
         boxShadow="md"
         borderWidth="1px"
         borderRadius="md"
