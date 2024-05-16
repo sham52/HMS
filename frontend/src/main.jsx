@@ -4,7 +4,7 @@ import App from "./App.jsx";
 import { ChakraProvider } from "@chakra-ui/react";
 import { extendTheme } from "@chakra-ui/react";
 import { BrowserRouter as Router } from "react-router-dom";
-
+import Navbar from "./components/Navbar.jsx";
 import "./index.css";
 
 const colors = {
