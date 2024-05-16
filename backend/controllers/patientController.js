@@ -165,6 +165,7 @@ const loginPatient = async (req, res) => {
       password,
       patient[0][0].password
     );
+    console.log("password inside db: ", patient[0][0].password);
     if (!validPassword) {
       return res.status(400).json({ message: "Invalid password" });
     }

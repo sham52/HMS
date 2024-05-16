@@ -28,12 +28,13 @@ const {
   updateDoctor,
   deleteDoctor,
 } = require("../controllers/doctorContoller");
+const { loginUser } = require("../controllers/loginController");
 
 const express = require("express");
 const router = express.Router();
 
 //login process
-router.get("/login",)
+router.post("/login", loginUser);
 
 // Patients routes
 router.get("/patients", getAllPatients);

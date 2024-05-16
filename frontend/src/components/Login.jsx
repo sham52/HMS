@@ -19,20 +19,27 @@ const validationSchema = Yup.object().shape({
   password: Yup.string().required("Şifre gerekli"),
 });
 
-const LoginPage = () => {
+const Login = () => {
   const handleSubmit = async (values, actions) => {
     try {
+      const responseBody = await {
+        id: values.id,
+        password: values.password,
+      };
+
       const response = await fetch("http://localhost:3000/login", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify(values),
+        body: JSON.stringify(responseBody),
       });
-      if (response.ok) {
+      console.log(response);
+      if (response.token) {
         // Login successful, redirect to main page or set a flag to indicate the user is logged in
         console.log("Login successful");
         // Redirect or set a flag here
+        document.cookie = `authToken=${response.token};path=/`;
       } else {
         // Login failed, handle error
         console.error("Login failed");
@@ -101,12 +108,10 @@ const LoginPage = () => {
                 type="submit"
                 w="100%"
               >
-                Login
+                Giriş
               </Button>
               <Box mt={4}>
-                <Link href="/register">
-                  You don't have an account yet? Register here!
-                </Link>
+                <Link href="/register">Hesabın yok mu? Hemen kayıt ol!</Link>
               </Box>
             </Form>
           )}
@@ -116,4 +121,4 @@ const LoginPage = () => {
   );
 };
 
-export default LoginPage;
+export default Login;
