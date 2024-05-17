@@ -1,5 +1,7 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
+import { useAuth } from "../context/AuthContext";
+
 import {
   ChakraProvider,
   Box,
@@ -21,6 +23,7 @@ const validationSchema = Yup.object().shape({
 });
 
 const Login = () => {
+  const { setAuthToken } = useAuth();
   const navigate = useNavigate();
   const handleSubmit = async (values, actions) => {
     try {
@@ -41,7 +44,10 @@ const Login = () => {
         const data = await response.json();
         if (data.token) {
           console.log("Login successful");
+          actions.resetForm();
+          setAuthToken(data.token);
           document.cookie = `authToken=${data.token};path=/`;
+          navigate("/patient-main");
         } else {
           console.error("Login failed");
           // You can display an error message to the user if needed

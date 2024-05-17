@@ -1,5 +1,6 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
+import { useAuth } from "../context/AuthContext";
 import {
   Box,
   Flex,
@@ -22,11 +23,7 @@ import { HamburgerIcon, CloseIcon, AddIcon } from "@chakra-ui/icons";
 const Navbar = () => {
   const navigate = useNavigate();
   const { isOpen, onOpen, onClose } = useDisclosure();
-
-  const authToken = document.cookie.replace(
-    /(?:(?:^|.*;\s*)authToken\s*=\s*([^;]*).*$)|^.*$/,
-    "$1"
-  );
+  const { authToken, userType } = useAuth(); // Get userType from useAuth
 
   const signOut = () => {
     document.cookie =
@@ -34,13 +31,32 @@ const Navbar = () => {
     navigate("/main");
   };
 
+  const redirectUser = () => {
+    switch (userType) {
+      case "patient":
+        navigate("/patient-main");
+        break;
+      case "doctor":
+        navigate("/doctor-main");
+        break;
+      case "pharmacist":
+        navigate("/pharmacist-main");
+        break;
+      default:
+        // Redirect to a default page if userType is not recognized
+        navigate("/main");
+    }
+  };
+
   return (
     <Box
       bg={useColorModeValue("gray.100", "gray.900")}
       px={4}
       pos="fixed"
-      w="100vh"
+      w="100%"
       zIndex="999"
+      top={0} // Add this line
+      left={0} // Add this line
     >
       <Flex
         h={16}
@@ -80,7 +96,7 @@ const Navbar = () => {
                 <Avatar size="sm" />
               </MenuButton>
               <MenuList>
-                <MenuItem>Profile</MenuItem>
+                <MenuItem onClick={redirectUser}>Profile</MenuItem>
                 <MenuItem>Settings</MenuItem>
                 <MenuDivider />
                 <MenuItem onClick={signOut}>Sign out</MenuItem>

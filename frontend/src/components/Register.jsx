@@ -1,5 +1,7 @@
 import React, { useState } from "react";
-import { useNavigation } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
+import { useAuth } from "../context/AuthContext";
+
 import {
   ChakraProvider,
   Box,
@@ -48,8 +50,9 @@ const validationSchema = Yup.object().shape({
   email: Yup.string().email("Geçerli bir e-posta adresi girin"),
 });
 const RegisterPage = () => {
+  const { setAuthToken } = useAuth();
   const [isRegistered, setIsRegistered] = useState(false);
-  const navigate = useNavigation();
+  const navigate = useNavigate();
 
   const handleSubmit = async (values, actions) => {
     try {
@@ -83,6 +86,7 @@ const RegisterPage = () => {
       document.cookie = `authToken=${data.token};path=/`;
       if (data.token) {
         // Registration successful, set isRegistered to true
+        setAuthToken(data.token);
         navigate("/patient-main");
         setIsRegistered(true);
       } else {
@@ -90,7 +94,9 @@ const RegisterPage = () => {
         console.error("Registration failed");
         // You can display an error message to the user if needed
       }
+
       console.log(`submitted`);
+      actions.resetForm();
     } catch (error) {
       console.error("Error registering user:", error);
       // You can display an error message to the user if needed

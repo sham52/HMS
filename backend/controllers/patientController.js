@@ -60,6 +60,7 @@ const createPatient = async (req, res) => {
     res.json({
       message: "Patient created successfully",
       patientID: result.insertId,
+      userType: "Patient",
       token: token,
     });
   } catch (err) {
@@ -167,10 +168,38 @@ const loginPatient = async (req, res) => {
     res.status(500).json({ message: "Server Error" });
   }
 };
+
+const getPatientData = async (req, res) => {
+  try {
+    const { patientID } = req.body;
+    const query = `
+    SELECT 
+      a.appointmentDate, 
+      d.firstName AS doctorFirstName, 
+      d.lastName AS doctorLastName, 
+      p.medicationDetails
+    FROM Appointments a
+    JOIN Doctors d ON a.doctorID = d.doctorID
+    JOIN Prescriptions p ON a.appointmentID = p.appointmentID
+    WHERE a.patientID = ?;
+  `;
+    try {
+      const [rows] = await pool.query(query, [patientID]);
+      res.json(rows);
+    } catch (err) {
+      console.error("Error executing query:", err);
+      res.status(500).send("Server error");
+    }
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: "Server Error" });
+  }
+};
 module.exports = {
   getAllPatients,
   deletePatient,
   updatePatient,
   createPatient,
   loginPatient,
+  getPatientData,
 };

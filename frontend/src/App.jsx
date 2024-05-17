@@ -1,12 +1,11 @@
 import "./App.css";
 import { useState, useEffect } from "react";
 import { Routes, Route, useNavigate } from "react-router-dom";
-import { Box } from "@chakra-ui/react";
+import { AuthProvider, useAuth } from "./context/AuthContext";
 
 import Login from "./components/Login";
 import Home from "./components/Home";
 import Register from "./components/Register";
-import Protected from "./components/Protected";
 import Main from "./components/Main";
 
 import Admin from "./components/Admin/Admin";
@@ -18,16 +17,27 @@ import DoctorMain from "./components/Doctor/DoctorMain";
 import Navbar from "./components/Navbar";
 
 const App = () => {
-  const [authToken, setAuthToken] = useState();
+  const [authToken, setAuthToken] = useState(null);
   const navigate = useNavigate();
 
   useEffect(() => {
-    const authTokenFromCookie = getAuthTokenFromCookie();
-    if (!authTokenFromCookie) {
-      return;
-    } else {
-      setAuthToken(authTokenFromCookie);
-    }
+    const checkAuthTokenBeforeUnload = (event) => {
+      const token = getAuthTokenFromCookie();
+      if (!token) {
+        // Prevent the page from unloading
+        event.preventDefault();
+        // Prompt the user to stay on the page
+        event.returnValue = "";
+        // Navigate to login page
+        navigate("/login");
+      }
+    };
+
+    window.addEventListener("beforeunload", checkAuthTokenBeforeUnload);
+
+    return () => {
+      window.removeEventListener("beforeunload", checkAuthTokenBeforeUnload);
+    };
   }, []);
 
   const getAuthTokenFromCookie = () => {
@@ -36,22 +46,21 @@ const App = () => {
       .find((row) => row.startsWith("authToken="));
     return cookieValue ? cookieValue.split("=")[1] : null;
   };
-
   return (
     <>
-      <Navbar />
-      <Routes>
-        <Route path="/" element={<Home />} />
-        <Route path="/main" element={<Main />} />
-        <Route path="/login" element={<Login />} />
-        <Route path="/register" element={<Register />} />
-        <Route element={<Protected authToken={authToken} />}>
-          <Route path="/patient-main" element={<PatientMain />} />
-          <Route path="/doctor-main" element={<PatientMain />} />
-          <Route path="/pharmacist-main" element={<PatientMain />} />
-          <Route path="/admin" element={<PatientMain />} />
-        </Route>
-      </Routes>
+      <AuthProvider>
+        <Navbar />
+        <Routes>
+          <Route path="/" element={<Home />} />
+          <Route path="main" element={<Main />} />
+          <Route path="login" element={<Login />} />
+          <Route path="register" element={<Register />} />
+          <Route path="patient-main" element={<PatientMain />} />
+          <Route path="/doctor-main" element={<DoctorMain />} />
+          <Route path="/pharmacist-main" element={<PharmacistMain />} />
+          <Route path="/admin" element={<Admin />} />
+        </Routes>
+      </AuthProvider>
     </>
   );
 };
