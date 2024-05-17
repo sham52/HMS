@@ -6,7 +6,6 @@ import { AuthProvider, useAuth } from "./context/AuthContext";
 import Login from "./components/Login";
 import Home from "./components/Home";
 import Register from "./components/Register";
-import Main from "./components/Main";
 
 import Admin from "./components/Admin/Admin";
 
@@ -20,9 +19,12 @@ const App = () => {
   const [authToken, setAuthToken] = useState(null);
   const navigate = useNavigate();
 
+  const getAuthTokenFromLocalStorage = () => {
+    return localStorage.getItem("authToken");
+  };
   useEffect(() => {
     const checkAuthTokenBeforeUnload = (event) => {
-      const token = getAuthTokenFromCookie();
+      const token = getAuthTokenFromLocalStorage();
       if (!token) {
         // Prevent the page from unloading
         event.preventDefault();
@@ -40,16 +42,10 @@ const App = () => {
     };
   }, [authToken]);
 
-  const getAuthTokenFromCookie = () => {
-    const cookieValue = document.cookie
-      .split("; ")
-      .find((row) => row.startsWith("authToken="));
-    return cookieValue ? cookieValue.split("=")[1] : null;
-  };
   return (
     <>
       <AuthProvider>
-        <Navbar />
+        <Navbar authToken = {authToken} />
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="login" element={<Login />} />

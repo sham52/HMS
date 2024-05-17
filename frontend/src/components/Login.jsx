@@ -46,13 +46,12 @@ const Login = () => {
         if (data.token) {
           console.log("Login successful");
 
-          // Store token in cookies
-          document.cookie = `authToken=${data.token};path=/`;
+          localStorage.setItem("authToken", data.token);
 
-          // Store additional user data in cookies or local storage
-          document.cookie = `fullname=${data.fullname};path=/`;
-          document.cookie = `userType=${data.userType};path=/`;
-          document.cookie = `userId=${data.userId};path=/`;
+          // Store additional user data in localStorage
+          localStorage.setItem("fullName", data.fullName);
+          localStorage.setItem("userType", data.userType);
+          localStorage.setItem("userId", data.userID);
 
           actions.resetForm();
           setAuthToken(data.token);

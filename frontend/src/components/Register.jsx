@@ -83,8 +83,8 @@ const RegisterPage = () => {
       const data = await response.json(); // Read the response body as JSON
       console.log("RESPONSE", data.token);
 
-      document.cookie = `authToken=${data.token};path=/`;
       if (data.token) {
+        localStorage.setItem("authToken", data.token);
         // Registration successful, set isRegistered to true
         setAuthToken(data.token);
         navigate("/patient-main");

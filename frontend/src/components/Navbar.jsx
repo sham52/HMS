@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import {
@@ -18,20 +18,28 @@ import {
   useColorModeValue,
   Stack,
 } from "@chakra-ui/react";
-import { HamburgerIcon, CloseIcon, AddIcon } from "@chakra-ui/icons";
+import { HamburgerIcon, CloseIcon,  } from "@chakra-ui/icons";
 
-const Navbar = () => {
+const Navbar = ({ authToken }) => {
   const navigate = useNavigate();
   const { isOpen, onOpen, onClose } = useDisclosure();
-  const { authToken, userType } = useAuth(); // Get userType from useAuth
+  // const { authToken } = useAuth(); // Remove userType from here
 
+  // useEffect(() => {
+  //   const storedAuthToken = localStorage.getItem("authToken");
+  //   if (!storedAuthToken) {
+  //     // navigate("/login");
+  //   }
+  // }, [authToken, navigate]);
+
+  console.log(authToken)
   const signOut = () => {
-    document.cookie =
-      "authToken=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+    localStorage.clear();
     navigate("/login");
   };
 
   const redirectUser = () => {
+    const userType = localStorage.getItem("userType");
     switch (userType) {
       case "patient":
         navigate("/patient-main");
@@ -43,7 +51,6 @@ const Navbar = () => {
         navigate("/pharmacist-main");
         break;
       default:
-        // Redirect to a default page if userType is not recognized
         navigate("/login");
     }
   };

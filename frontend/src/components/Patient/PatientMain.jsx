@@ -20,7 +20,10 @@ const PatientMain = () => {
   useEffect(() => {
     const fetchPatientData = async () => {
       try {
-        const response = await axios.get("/patient-details");
+        // Get patientId from cookies
+        const patientId = localStorage.getItem("patientId");
+
+        const response = await axios.get(`/patients/${patientId}`);
         setPatientData(response.data);
       } catch (err) {
         console.error("Error fetching patient:", err);

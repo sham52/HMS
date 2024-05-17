@@ -40,7 +40,7 @@ const loginUser = async (req, res) => {
 
           return res.json({
             message: "Patient logged in successfully",
-            patientID: userID,
+            userID: userID,
             userType: userType,
             fullName: fullName,
             token: token,
@@ -78,7 +78,7 @@ const loginUser = async (req, res) => {
 
           return res.json({
             message: "Doctor logged in successfully",
-            doctorID: userID,
+            userID: userID,
             userType: userType,
             fullName: fullName,
             token: token,
@@ -116,7 +116,7 @@ const loginUser = async (req, res) => {
 
           return res.json({
             message: "Pharmacist logged in successfully",
-            pharmacistID: userID,
+            userID: userID,
             userType: userType,
             fullName: fullName,
             token: token,
