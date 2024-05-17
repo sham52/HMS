@@ -30,6 +30,13 @@ const {
   updateDoctor,
   deleteDoctor,
 } = require("../controllers/doctorContoller");
+
+const {
+  getAllPharmacists,
+  createPharmacist,
+  updatePharmacist,
+  deletePharmacist,
+} = require("../controllers/pharmacistController");
 const { loginUser } = require("../controllers/loginController");
 
 const express = require("express");
@@ -69,5 +76,10 @@ router.get("/prescriptions", getAllPrescriptions);
 router.post("/prescriptions", createPrescription);
 router.put("/prescriptions/:id", updatePrescription); // Added :id
 router.delete("/prescriptions/:id", deletePrescription);
+
+router.get("/pharmacists", getAllPharmacists);
+router.post("/pharmacists", createPharmacist);
+router.put("/pharmacists/:id", updatePharmacist);
+router.delete("/pharmacists/:id", deletePharmacist);
 
 module.exports = router;

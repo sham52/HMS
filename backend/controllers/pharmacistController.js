@@ -1,5 +1,5 @@
 const pool = require("../config/db");
-const { pharmacistSchema } = require("../models/pharmacistSchema");
+const { pharmacistSchema } = require("../models/pharmacistModel");
 
 const bcrypt = require("bcrypt");
 const saltRounds = 10;

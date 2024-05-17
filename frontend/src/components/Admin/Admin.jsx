@@ -1,7 +1,26 @@
 import React from "react";
 import { Box, Heading, Flex, Button } from "@chakra-ui/react";
+import { useNavigate } from "react-router-dom";
+import { Routes, Route } from "react-router-dom";
+import PatientsManager from "./PatientsManager";
+import DoctorsManager from "./DoctorsManager";
+import PharmacistsManager from "./PharmacistsManager";
 
 const Admin = () => {
+  const navigate = useNavigate();
+
+  const handlePatientsClick = () => {
+    navigate("PatientsManager");
+  };
+
+  const handleDoctorsClick = () => {
+    navigate("DoctorsManager");
+  };
+
+  const handlePharmacistsClick = () => {
+    navigate("PharmacistsManager");
+  };
+
   return (
     <Box height="100vh" p={0}>
       <Heading as="h1" mb={0} textAlign="center">
@@ -15,41 +34,44 @@ const Admin = () => {
 
           <Flex justify="center">
             <Box p={4} bg="gray.100" borderRadius="md" mx={4}>
-              <Heading as="h2" size="md" mb={2} textAlign="center">
+              <Button
+                colorScheme="blue"
+                mb={2}
+                w="100%"
+                onClick={handlePatientsClick}
+              >
                 Manage Patients
-              </Heading>
-              <Button colorScheme="blue" mb={2} w="100%">
-                View Patients
-              </Button>
-              <Button colorScheme="blue" w="100%">
-                Add Patient
               </Button>
             </Box>
 
             <Box p={4} bg="gray.100" borderRadius="md" mx={4}>
-              <Heading as="h2" size="md" mb={2} textAlign="center">
+              <Button
+                colorScheme="blue"
+                mb={2}
+                w="100%"
+                onClick={handleDoctorsClick}
+              >
                 Manage Doctors
-              </Heading>
-              <Button colorScheme="blue" mb={2} w="100%">
-                View Doctors
-              </Button>
-              <Button colorScheme="blue" w="100%">
-                Add Doctor
               </Button>
             </Box>
 
             <Box p={4} bg="gray.100" borderRadius="md" mx={4}>
-              <Heading as="h2" size="md" mb={2} textAlign="center">
+              <Button
+                colorScheme="blue"
+                mb={2}
+                w="100%"
+                onClick={handlePharmacistsClick}
+              >
                 Manage Pharmacists
-              </Heading>
-              <Button colorScheme="blue" mb={2} w="100%">
-                View Pharmacists
-              </Button>
-              <Button colorScheme="blue" w="100%">
-                Add Pharmacists
               </Button>
             </Box>
           </Flex>
+
+          <Routes>
+            <Route path="PatientsManager" element={<PatientsManager />} />
+            <Route path="DoctorsManager" element={<DoctorsManager />} />
+            <Route path="PharmacistsManager" element={<PharmacistsManager />} />
+          </Routes>
         </Box>
       </Flex>
     </Box>

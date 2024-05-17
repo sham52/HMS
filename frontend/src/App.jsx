@@ -45,7 +45,7 @@ const App = () => {
   return (
     <>
       <AuthProvider>
-        <Navbar authToken = {authToken} />
+        <Navbar authToken={authToken} />
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="login" element={<Login />} />
@@ -53,7 +53,7 @@ const App = () => {
           <Route path="patient-main" element={<PatientMain />} />
           <Route path="/doctor-main" element={<DoctorMain />} />
           <Route path="/pharmacist-main" element={<PharmacistMain />} />
-          <Route path="/admin" element={<Admin />} />
+          <Route path="/admin/*" element={<Admin />} />
         </Routes>
       </AuthProvider>
     </>

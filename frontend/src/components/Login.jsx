@@ -1,6 +1,7 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
+import axios from "axios";
 
 import {
   ChakraProvider,
@@ -32,18 +33,19 @@ const Login = () => {
         password: values.password,
       };
 
-      const response = await fetch("http://localhost:3000/login", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(responseBody),
-      });
+      const response = await axios.post(
+        "http://localhost:3000/login",
+        responseBody,
+        {
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
 
       if (response.status === 200) {
-        const data = await response.json();
-        console.log(data);
-        if (data.token) {
+        const data = response.data;
+        if (response.data.token) {
           console.log("Login successful");
 
           localStorage.setItem("authToken", data.token);

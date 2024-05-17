@@ -61,8 +61,8 @@ const CreateAppointmentForm = ({ doctors, onSubmit }) => {
           value={selectedDoctor}
           onChange={(e) => setSelectedDoctor(e.target.value)}
         >
-          {doctors.map((doctor) => (
-            <option key={doctor.id} value={doctor.id}>
+          {doctors.map((doctor, index) => (
+            <option key={index} value={doctor.id}>
               {doctor.firstName} {doctor.lastName}
             </option>
           ))}
