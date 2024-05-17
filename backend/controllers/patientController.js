@@ -171,7 +171,6 @@ const loginPatient = async (req, res) => {
 
 const getPatientData = async (req, res) => {
   try {
-    // const { patientID } = req.body;
     const patientID = await req.params.id;
     console.log(patientID);
     const query = `
@@ -179,16 +178,22 @@ const getPatientData = async (req, res) => {
       a.appointmentDate, 
       d.firstName AS doctorFirstName, 
       d.lastName AS doctorLastName, 
-      p.medicationDetails
-    FROM Appointments a
-    JOIN Doctors d ON a.doctorID = d.doctorID
-    JOIN Prescriptions p ON a.appointmentID = p.appointmentID
-    WHERE a.patientID = ?;
+      p.medicationDetails,
+      pt.firstName,
+      pt.lastName,
+      pt.dateOfBirth,
+      pt.gender,
+      pt.email,
+      pt.phoneNumber
+    FROM Patients pt
+    LEFT JOIN Appointments a ON pt.patientID = a.patientID
+    LEFT JOIN Doctors d ON a.doctorID = d.doctorID
+    LEFT JOIN Prescriptions p ON a.appointmentID = p.appointmentID
+    WHERE pt.patientID = ?;
   `;
     try {
       const [rows] = await pool.query(query, [patientID]);
       res.json(rows);
-      console.log(rows);
     } catch (err) {
       console.error("Error executing query:", err);
       res.status(500).send("Server error");

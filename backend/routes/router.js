@@ -10,6 +10,7 @@ const {
   createAppointment,
   updateAppointment,
   deleteAppointment,
+  getAppointmentData,
 } = require("../controllers/appointmentController");
 const {
   getAllDepartments,
@@ -55,6 +56,7 @@ router.get("/appointments", getAllAppointments);
 router.post("/appointments", createAppointment);
 router.put("/appointments/:id", updateAppointment); // Added :id
 router.delete("/appointments/:id", deleteAppointment); // Added :id
+router.get("/appointments/:id", getAppointmentData);
 
 // Departments routes
 router.get("/departments", getAllDepartments);

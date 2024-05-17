@@ -19,7 +19,11 @@ import { useAuth } from "../../context/AuthContext";
 import axios from "axios";
 
 const PatientMain = () => {
-  const [appointmentData, setAppointmentData] = useState(null);
+  const [appointmentData, setAppointmentData] = useState({
+    appointmentDate: null,
+    doctorFirstName: null,
+    doctorLastName: null,
+  });
   const createAppointment = async () => {
     try {
       const response = await axios.post(
@@ -32,21 +36,15 @@ const PatientMain = () => {
   };
 
   const [patientData, setPatientData] = useState({
-    patientID: null,
-    fullName: null,
-    userType: null,
-    dateOfBirth: null,
-    gender: null,
-    phoneNumber: null,
-    email: null,
-    medicationDetails: null,
-    appointments: [
-      {
-        appointmentDate: null,
-        doctorFirstName: null,
-        doctorLastName: null,
-      },
-    ],
+    patientID: localStorage.getItem("userID"),
+    fullName: localStorage.getItem("fullName"),
+    userType: localStorage.getItem("userType"),
+    dateOfBirth: localStorage.getItem("dateOfBirth"),
+    gender: localStorage.getItem("gender"),
+    phoneNumber: localStorage.getItem("phoneNumber"),
+    email: localStorage.getItem("email"),
+    medicationDetails: localStorage.getItem("medicationDetails"),
+    appointments: null,
   });
 
   useEffect(() => {
@@ -55,17 +53,22 @@ const PatientMain = () => {
         const response = await axios.get(
           `http://localhost:3000/patients/${patientData.patientID}`
         );
-        setPatientData({
-          ...patientData,
-          patientID: localStorage.getItem("userID"),
-          userType: localStorage.getItem("userType"),
-          fullName: localStorage.getItem("fullName"),
-        });
-        console.log(response);
+        setAppointmentData(
+          response.data.map((appointment) => ({
+            appointmentDate: appointment.appointmentDate,
+            doctorFirstName: appointment.doctorFirstName,
+            doctorLastName: appointment.doctorLastName,
+          })),
+          setPatientData((prev) => ({
+            ...prev,
+            appointments: response.data,
+          }))
+        );
       } catch (err) {
         console.error("Error fetching patient:", err);
       }
     };
+
     fetchPatientData();
   }, []);
 
@@ -88,16 +91,18 @@ const PatientMain = () => {
               <Thead>
                 <Tr>
                   <Th>Appointment Date</Th>
-                  <Th>Doctor Name</Th>
-                  <Th>Medication Details</Th>
+                  <Th>Doktor Ad</Th>
+                  <Th>Doktor Soyad</Th>
+                  <Th>Sıra Numarası</Th>
                 </Tr>
               </Thead>
               <Tbody>
                 {patientData.appointments?.map((appointment) => (
                   <Tr key={appointment.appointmentDate}>
                     <Td>{appointment.appointmentDate}</Td>
-                    <Td>{`${appointment.doctorName}`}</Td>
-                    <Td>{appointment.medicationDetails || "N/A"}</Td>
+                    <Td>{`${appointment.doctorFirstName}`}</Td>
+                    <Td>{`${appointment.doctorLastName}`}</Td>
+                    <Td>{appointment.appointmentID || "N/A"}</Td>
                   </Tr>
                 ))}
               </Tbody>
