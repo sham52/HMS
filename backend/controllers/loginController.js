@@ -2,26 +2,22 @@ const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const pool = require("../config/db");
 
-const { doctorSchema } = require("../models/doctorModel");
-const { pharmacistSchema } = require("../models/pharmacistModel");
-const { patientSchema } = require("../models/patientModel");
-
 const loginUser = async (req, res) => {
   console.log("LOGIN USER WORKS");
-  const { id, password } = req.body;
-  
-  console.log("Checking database for patient with ID:", id);
+  const { id, password } = await req.body;
+
+  console.log("Checking database for user with ID:", id);
 
   try {
     let fullName;
     let userType;
     let userID;
 
+    // PATIENT CHECK
     const [patientRows] = await pool.query(
       "SELECT patientID, firstName, lastName, password FROM Patients WHERE patientID = ?",
       [id]
     );
-    console.log("PATIENT DATA: ", patientRows);
 
     if (patientRows.length > 0) {
       const patient = patientRows[0];
@@ -31,7 +27,6 @@ const loginUser = async (req, res) => {
         fullName = `${patient.firstName} ${patient.lastName}`;
         userID = patient.patientID;
         const hashedPassword = patient.password;
-        console.log(fullName)
 
         const passwordMatch = await bcrypt.compare(password, hashedPassword);
         if (passwordMatch) {
@@ -51,18 +46,91 @@ const loginUser = async (req, res) => {
             token: token,
           });
         } else {
-          console.log("Passwords does not match");
-          return res.status(401).json({
-            message: "Password does not match",
-          });
+          console.log("Password not matched");
         }
       }
-    } else {
-      console.log("Patient not found");
-      return res.status(404).json({
-        message: "Patient not found",
-      });
     }
+
+    // DOCTOR CHECK
+    const [doctorRows] = await pool.query(
+      "SELECT doctorID, firstName, lastName, password FROM Doctors WHERE doctorID = ?",
+      [id]
+    );
+
+    if (doctorRows.length > 0) {
+      const doctor = doctorRows[0];
+      const dbDoctorId = doctor.doctorID;
+      if (id === dbDoctorId) {
+        userType = "Doctor";
+        fullName = `${doctor.firstName} ${doctor.lastName}`;
+        userID = doctor.doctorID;
+        const hashedPassword = doctor.password;
+
+        const passwordMatch = await bcrypt.compare(password, hashedPassword);
+        if (passwordMatch) {
+          console.log("Password matched");
+
+          // Create and send the token
+          const token = jwt.sign(
+            { doctorID: userID },
+            process.env.TOKEN_SECRET
+          );
+
+          return res.json({
+            message: "Doctor logged in successfully",
+            doctorID: userID,
+            userType: userType,
+            fullName: fullName,
+            token: token,
+          });
+        } else {
+          console.log("Password not matched");
+        }
+      }
+    }
+
+    // PHARMACIST CHECK
+    const [pharmacistRows] = await pool.query(
+      "SELECT pharmacistID, firstName, lastName, password FROM Pharmacists WHERE pharmacistID = ?",
+      [id]
+    );
+
+    if (pharmacistRows.length > 0) {
+      const pharmacist = pharmacistRows[0];
+      const dbPharmacistId = pharmacist.pharmacistID;
+      if (id === dbPharmacistId) {
+        userType = "Pharmacist";
+        fullName = `${pharmacist.firstName} ${pharmacist.lastName}`;
+        userID = pharmacist.pharmacistID;
+        const hashedPassword = pharmacist.password;
+
+        const passwordMatch = await bcrypt.compare(password, hashedPassword);
+        if (passwordMatch) {
+          console.log("Password matched");
+
+          // Create and send the token
+          const token = jwt.sign(
+            { pharmacistID: userID },
+            process.env.TOKEN_SECRET
+          );
+
+          return res.json({
+            message: "Pharmacist logged in successfully",
+            pharmacistID: userID,
+            userType: userType,
+            fullName: fullName,
+            token: token,
+          });
+        } else {
+          console.log("Password not matched");
+        }
+      }
+    }
+
+    console.log("User not found");
+    return res.status(404).json({
+      message: "User not found",
+    });
   } catch (error) {
     console.error("Error logging in user: ", error);
     return res.status(500).json({
@@ -70,81 +138,5 @@ const loginUser = async (req, res) => {
     });
   }
 };
-// const [doctor] = await pool.query(
-//   "SELECT * FROM Doctors WHERE doctorID = ?",
-//   [id]
-// );
-// if (doctor.length > 0) {
-//   const dbDoctorId = doctor[0].doctorID;
-//   if (id === dbDoctorId) {
-//     userType = "Doctor";
-//     fullName = doctor[0].firstName + " " + doctor[0].lastName;
-//     userID = doctor[0].doctorID;
-//     const hashedPassword = doctor[0].password;
-//     const passwordMatch = await bcrypt.compare(password, hashedPassword);
-//     if (passwordMatch) {
-//       console.log("Password matched");
-
-//       // Create and send the token
-//       const token = jwt.sign(
-//         { doctorID: userID },
-//         process.env.TOKEN_SECRET
-//       );
-
-//       return res.json({
-//         message: "Doctor logged in successfully",
-//         doctorID: userID,
-//         userType: userType,
-//         fullName: fullName,
-//         token: token,
-//       });
-//     } else {
-//       console.log("Passwords does not match");
-//       return res.status(401).json({
-//         message: "Password does not match",
-//       });
-//     }
-//   }
-// }
-
-// const [pharmacist] = await pool.query(
-//   "SELECT * FROM Pharmacists WHERE pharmacistID = ?",
-//   [id]
-// );
-// if (pharmacist.length > 0) {
-//   const dbPharmacistId = patient[0].pharmacist;
-//   if (id === dbPharmacistId) {
-//     userType = "Pharmacist";
-//     fullName = pharmacist[0].firstName + " " + pharmacist[0].lastName;
-//     userID = pharmacist[0].pharmacistID;
-//     const hashedPassword = pharmacist[0].password;
-//     const passwordMatch = await bcrypt.compare(password, hashedPassword);
-//     if (passwordMatch) {
-//       console.log("Password matched");
-
-//       // Create and send the token
-//       const token = jwt.sign(
-//         { pharmacistID: userID },
-//         process.env.TOKEN_SECRET
-//       );
-
-//       return res.json({
-//         message: "Pharmacist logged in successfully",
-//         pharmacistID: userID,
-//         userType: userType,
-//         fullName: fullName,
-//         token: token,
-//       });
-//     } else {
-//       console.log("Passwords does not match");
-//       return res.status(401).json({
-//         message: "Password does not match",
-//       });
-//     }
-//     }
-//   }
-
-//   console.log("ID: ", id);
-//   console.log("Password: ", password);
 
 module.exports = { loginUser };

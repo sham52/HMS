@@ -45,10 +45,13 @@ const Login = () => {
         console.log(data);
         if (data.token) {
           console.log("Login successful");
+
           actions.resetForm();
           setAuthToken(data.token);
+
           document.cookie = `authToken=${data.token};path=/`;
           navigate("/patient-main");
+          
         } else {
           console.error("Login failed");
         }

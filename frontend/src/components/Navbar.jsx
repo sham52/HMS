@@ -28,7 +28,7 @@ const Navbar = () => {
   const signOut = () => {
     document.cookie =
       "authToken=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
-    navigate("/main");
+    navigate("/login");
   };
 
   const redirectUser = () => {
