@@ -59,7 +59,7 @@ const createPatient = async (req, res) => {
 
     res.json({
       message: "Patient created successfully",
-      patientID: result.insertId,
+      patientID: patientID,
       userType: "Patient",
       token: token,
     });
@@ -172,6 +172,7 @@ const loginPatient = async (req, res) => {
 const getPatientData = async (req, res) => {
   try {
     const { patientID } = req.body;
+    const patientIDPara = req.params.id;
     const query = `
     SELECT 
       a.appointmentDate, 

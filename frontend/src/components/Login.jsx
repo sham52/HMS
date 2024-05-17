@@ -46,12 +46,18 @@ const Login = () => {
         if (data.token) {
           console.log("Login successful");
 
+          // Store token in cookies
+          document.cookie = `authToken=${data.token};path=/`;
+
+          // Store additional user data in cookies or local storage
+          document.cookie = `fullname=${data.fullname};path=/`;
+          document.cookie = `userType=${data.userType};path=/`;
+          document.cookie = `userId=${data.userId};path=/`;
+
           actions.resetForm();
           setAuthToken(data.token);
 
-          document.cookie = `authToken=${data.token};path=/`;
           navigate("/patient-main");
-          
         } else {
           console.error("Login failed");
         }

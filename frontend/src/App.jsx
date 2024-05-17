@@ -38,7 +38,7 @@ const App = () => {
     return () => {
       window.removeEventListener("beforeunload", checkAuthTokenBeforeUnload);
     };
-  }, []);
+  }, [authToken]);
 
   const getAuthTokenFromCookie = () => {
     const cookieValue = document.cookie
