@@ -46,9 +46,9 @@ const PatientMain = () => {
           fullName: localStorage.getItem("fullName"),
         });
         const response = await axios.get(
-          `/patients/${localStorage.getItem("userID")}`
+          `http://localhost:3000/patients/${patientData.patientID}`
         );
-        setPatientData(response.data);
+        console.log(response);
       } catch (err) {
         console.error("Error fetching patient:", err);
       }

@@ -171,8 +171,9 @@ const loginPatient = async (req, res) => {
 
 const getPatientData = async (req, res) => {
   try {
-    const { patientID } = req.body;
-    const patientIDPara = req.params.id;
+    // const { patientID } = req.body;
+    const patientID = await req.params.id;
+    console.log(patientID);
     const query = `
     SELECT 
       a.appointmentDate, 
