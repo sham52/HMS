@@ -42,6 +42,7 @@ const Login = () => {
 
       if (response.status === 200) {
         const data = await response.json();
+        console.log(data);
         if (data.token) {
           console.log("Login successful");
           actions.resetForm();
@@ -50,15 +51,12 @@ const Login = () => {
           navigate("/patient-main");
         } else {
           console.error("Login failed");
-          // You can display an error message to the user if needed
         }
       } else {
         console.error("Login failed");
-        // You can display an error message to the user if needed
       }
     } catch (error) {
       console.error("Error logging in:", error);
-      // You can display an error message to the user if needed
     } finally {
       actions.setSubmitting(false);
     }

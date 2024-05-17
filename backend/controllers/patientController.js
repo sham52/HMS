@@ -186,6 +186,7 @@ const getPatientData = async (req, res) => {
     try {
       const [rows] = await pool.query(query, [patientID]);
       res.json(rows);
+      console.log(rows);
     } catch (err) {
       console.error("Error executing query:", err);
       res.status(500).send("Server error");

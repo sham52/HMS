@@ -44,7 +44,7 @@ const Navbar = () => {
         break;
       default:
         // Redirect to a default page if userType is not recognized
-        navigate("/main");
+        navigate("/login");
     }
   };
 

@@ -40,32 +40,32 @@ router.post("/login", loginUser);
 // Patients routes
 router.get("/patients", getAllPatients);
 router.post("/patients", createPatient);
-router.put("/patients", updatePatient);
-router.delete("/patients", deletePatient);
-router.get("/patient-details", getPatientData);
+router.put("/patients/:id", updatePatient); // Added :id
+router.delete("/patients/:id", deletePatient); // Added :id
+router.get("/patients/:id", getPatientData);
 
 // Doctors routes
 router.get("/doctors", getAllDoctors);
 router.post("/doctors", createDoctor);
-router.put("/doctors", updateDoctor);
-router.delete("/doctors", deleteDoctor);
+router.put("/doctors/:id", updateDoctor); // Added :id
+router.delete("/doctors/:id", deleteDoctor); // Added :id
 
 // Appointments routes
 router.get("/appointments", getAllAppointments);
 router.post("/appointments", createAppointment);
-router.put("/appointments", updateAppointment);
-router.delete("/appointments", deleteAppointment);
+router.put("/appointments/:id", updateAppointment); // Added :id
+router.delete("/appointments/:id", deleteAppointment); // Added :id
 
 // Departments routes
 router.get("/departments", getAllDepartments);
 router.post("/departments", createDepartment);
-router.put("/departments", updateDepartment);
-router.delete("/departments", deleteDepartment);
+router.put("/departments/:id", updateDepartment); // Added :id
+router.delete("/departments/:id", deleteDepartment); // Added :id
 
 // Prescriptions routes
 router.get("/prescriptions", getAllPrescriptions);
 router.post("/prescriptions", createPrescription);
-router.put("/prescriptions", updatePrescription);
-router.delete("/prescriptions", deletePrescription);
+router.put("/prescriptions/:id", updatePrescription); // Added :id
+router.delete("/prescriptions/:id", deletePrescription);
 
 module.exports = router;

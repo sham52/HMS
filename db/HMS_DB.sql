@@ -88,7 +88,7 @@ INSERT INTO Pharmacists (pharmacistID, firstName, lastName, dateOfBirth, gender,
 INSERT INTO
     Departments (departmentName)
 VALUES
-    ('Dahiliye'),
+	('Dahiliye'),
     ('Cerrahi'),
     ('Kadın Hastalıkları ve Doğum'),
     ('Çocuk Sağlığı ve Hastalıkları'),
@@ -184,17 +184,18 @@ SELECT
 FROM
     Prescriptions pr
     JOIN Patients p ON pr.patientID = p.patientID
-    JOIN Doctors d ON pr.doctorID = d.doctorID -- TRIGGER
-    DELIMITER CREATE TRIGGER log_prescription_changes
-AFTER
-UPDATE
-    ON Prescriptions FOR EACH ROW BEGIN -- Insert only the medication details and change date
-INSERT INTO
-    PrescriptionChanges (prescriptionID, medicationDetails, changeDate)
-VALUES
-(OLD.prescriptionID, OLD.medicationDetails, NOW());
-
+    JOIN Doctors d ON pr.doctorID = d.doctorID 
+    -- TRIGGER
+DELIMITER //
+CREATE TRIGGER log_prescription_changes
+AFTER UPDATE ON Prescriptions
+FOR EACH ROW
+BEGIN
+    INSERT INTO PrescriptionChanges (prescriptionID, medicationDetails, changeDate)
+    VALUES (OLD.prescriptionID, OLD.medicationDetails, NOW());
 END;
+//
+DELIMITER ;
 
 -- Assertion to ensure appointment date
 DELIMITER //
@@ -204,3 +205,17 @@ CHECK (
 appointmentDate > CURDATE()
 );
 DELIMITER ;
+/*
+DELIMITER //
+CREATE TRIGGER check_appointment_date
+BEFORE INSERT ON Appointments
+FOR EACH ROW
+BEGIN
+    IF NEW.appointmentDate <= CURDATE() THEN
+        SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Appointment date must be in the future';
+    END IF;
+END;
+//
+DELIMITER ;
+*/
+
