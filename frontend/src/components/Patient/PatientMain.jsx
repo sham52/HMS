@@ -16,6 +16,7 @@ import {
   Button,
 } from "@chakra-ui/react";
 import { useAuth } from "../../context/AuthContext";
+import PatientAppointment from "./PatientAppointment";
 import axios from "axios";
 
 const PatientMain = () => {
@@ -47,6 +48,8 @@ const PatientMain = () => {
     appointments: null,
   });
 
+  const [doctorData, setDoctorData] = useState([]);
+
   useEffect(() => {
     const fetchPatientData = async () => {
       try {
@@ -69,9 +72,19 @@ const PatientMain = () => {
       }
     };
 
+    const fetchDoctorData = async () => {
+      try {
+        const response = await axios.get("http://localhost:3000/doctors");
+        setDoctorData(response.data);
+        console.log(doctorData);
+      } catch (err) {
+        console.error("Error fetching doctors:", err);
+      }
+    };
+
+    fetchDoctorData();
     fetchPatientData();
   }, []);
-
   return (
     <>
       <Flex justifyContent="center" alignItems="center" height="100vh">
@@ -100,8 +113,8 @@ const PatientMain = () => {
                 {patientData.appointments?.map((appointment) => (
                   <Tr key={appointment.appointmentDate}>
                     <Td>{appointment.appointmentDate}</Td>
-                    <Td>{`${appointment.doctorFirstName}`}</Td>
-                    <Td>{`${appointment.doctorLastName}`}</Td>
+                    <Td>{appointment.doctorFirstName}</Td>
+                    <Td>{appointment.doctorLastName}</Td>
                     <Td>{appointment.appointmentID || "N/A"}</Td>
                   </Tr>
                 ))}
@@ -109,7 +122,10 @@ const PatientMain = () => {
             </Table>
           </TableContainer>
           <Box mt={8}>
-            <Button onClick={createAppointment}>Randevu Oluştur</Button>
+            <PatientAppointment
+              doctors={doctorData}
+              onSubmit={createAppointment}
+            />
           </Box>
         </Box>
       </Flex>
