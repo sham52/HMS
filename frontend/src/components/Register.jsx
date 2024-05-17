@@ -85,6 +85,12 @@ const RegisterPage = () => {
 
       if (data.token) {
         localStorage.setItem("authToken", data.token);
+        localStorage.setItem(
+          "fullName",
+          `${values.firstName} ${values.lastName}`
+        );
+        localStorage.setItem("patientID", data.patientID);
+        localStorage.setItem("userType", data.userType);
         // Registration successful, set isRegistered to true
         setAuthToken(data.token);
         navigate("/patient-main");

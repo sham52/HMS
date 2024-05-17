@@ -18,21 +18,21 @@ import {
   useColorModeValue,
   Stack,
 } from "@chakra-ui/react";
-import { HamburgerIcon, CloseIcon,  } from "@chakra-ui/icons";
+import { HamburgerIcon, CloseIcon } from "@chakra-ui/icons";
 
-const Navbar = ({ authToken }) => {
+const Navbar = () => {
   const navigate = useNavigate();
   const { isOpen, onOpen, onClose } = useDisclosure();
-  // const { authToken } = useAuth(); // Remove userType from here
+  const { authToken } = useAuth(); // Remove userType from here
 
-  // useEffect(() => {
-  //   const storedAuthToken = localStorage.getItem("authToken");
-  //   if (!storedAuthToken) {
-  //     // navigate("/login");
-  //   }
-  // }, [authToken, navigate]);
+  useEffect(() => {
+    const storedAuthToken = localStorage.getItem("authToken");
+    if (!storedAuthToken) {
+      // navigate("/login");
+    }
+  }, [authToken, navigate]);
 
-  console.log(authToken)
+  console.log(authToken);
   const signOut = () => {
     localStorage.clear();
     navigate("/login");

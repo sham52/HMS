@@ -51,7 +51,7 @@ const Login = () => {
           // Store additional user data in localStorage
           localStorage.setItem("fullName", data.fullName);
           localStorage.setItem("userType", data.userType);
-          localStorage.setItem("userId", data.userID);
+          localStorage.setItem("userID", data.userID);
 
           actions.resetForm();
           setAuthToken(data.token);

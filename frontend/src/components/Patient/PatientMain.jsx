@@ -13,11 +13,24 @@ import {
   Text,
   Avatar,
   Center,
+  Button,
 } from "@chakra-ui/react";
 import { useAuth } from "../../context/AuthContext";
 import axios from "axios";
 
 const PatientMain = () => {
+  const [appointmentData, setAppointmentData] = useState(null);
+  const createAppointment = async () => {
+    try {
+      const response = await axios.post(
+        "http://localhost:3000/appoinments",
+        appointmentData
+      );
+    } catch (err) {
+      console.error("Error while creating appointment");
+    }
+  };
+
   const [patientData, setPatientData] = useState({
     patientID: null,
     fullName: null,
@@ -26,12 +39,12 @@ const PatientMain = () => {
     gender: null,
     phoneNumber: null,
     email: null,
-    medications: null,
+    medicationDetails: null,
     appointments: [
       {
         appointmentDate: null,
-        doctorName: null,
-        departmentName: null,
+        doctorFirstName: null,
+        doctorLastName: null,
       },
     ],
   });
@@ -39,22 +52,22 @@ const PatientMain = () => {
   useEffect(() => {
     const fetchPatientData = async () => {
       try {
-        await setPatientData({
+        const response = await axios.get(
+          `http://localhost:3000/patients/${patientData.patientID}`
+        );
+        setPatientData({
           ...patientData,
           patientID: localStorage.getItem("userID"),
           userType: localStorage.getItem("userType"),
           fullName: localStorage.getItem("fullName"),
         });
-        const response = await axios.get(
-          `http://localhost:3000/patients/${patientData.patientID}`
-        );
         console.log(response);
       } catch (err) {
         console.error("Error fetching patient:", err);
       }
     };
     fetchPatientData();
-  }, [patientData.patientID]);
+  }, []);
 
   return (
     <>
@@ -64,9 +77,9 @@ const PatientMain = () => {
             <Box p="6" borderWidth="1px" borderRadius="lg">
               <Avatar size="xl" name={patientData.fullName} />
               <Text mt={4} fontSize="xl" fontWeight="bold">
-                {patientData.fullName}
+                İsim Soyisim: {patientData.fullName}
               </Text>
-              <Text mt={2}>{patientData.userType}</Text>
+              <Text mt={2}>Kullanıcı Tipi: {patientData.userType}</Text>
             </Box>
           </Center>
           <TableContainer mt={8}>
@@ -90,6 +103,9 @@ const PatientMain = () => {
               </Tbody>
             </Table>
           </TableContainer>
+          <Box mt={8}>
+            <Button onClick={createAppointment}>Randevu Oluştur</Button>
+          </Box>
         </Box>
       </Flex>
     </>
