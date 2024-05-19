@@ -59,11 +59,12 @@ async function createPharmacist(req, res) {
 
 async function updatePharmacist(req, res) {
   try {
-    const { pharmacistID } = req.params;
-    const { error } = pharmacistSchema.validate(req.body);
-    if (error) {
-      return res.status(400).json({ message: error.details[0].message });
-    }
+    const pharmacistID = req.params.id;
+    console.log(pharmacistID);
+    // const { error } = pharmacistSchema.validate(req.body);
+    // if (error) {
+    //   return res.status(400).json({ message: error.details[0].message });
+    // }
 
     // Fetch the current pharmacist data from the database
     const [pharmacistRows] = await pool.query(
@@ -89,6 +90,7 @@ async function updatePharmacist(req, res) {
     };
 
     // Update the pharmacist in the database
+    // Update the pharmacist in the database
     await pool.query(
       "UPDATE pharmacists SET firstName = ?, lastName = ?, dateOfBirth = ?, gender = ?, email = ?, phoneNumber = ?, password = ? WHERE pharmacistID = ?",
       [
@@ -99,9 +101,9 @@ async function updatePharmacist(req, res) {
         updatedPharmacistData.email,
         updatedPharmacistData.phoneNumber,
         updatedPharmacistData.password,
+        req.params.id,
       ]
     );
-
     res.json({ message: "doctor updated successfully" });
   } catch (err) {
     console.error(err);

@@ -71,12 +71,13 @@ const createPatient = async (req, res) => {
 
 async function updatePatient(req, res) {
   try {
+    const patientID = req.params.id;
     const patient = req.body;
     patient.patientID = req.params.id;
-    const { error } = patientSchema.validate(patient);
-    if (error) {
-      return res.status(400).json({ message: error.details[0].message });
-    }
+    // const { error } = patientSchema.validate(patient);
+    // if (error) {
+    //   return res.status(400).json({ message: error.details[0].message });
+    // }
 
     // Fetch the current patient data from the database
     const [patientRows] = await pool.query(
@@ -224,12 +225,12 @@ const getPatientDetails = async (req, res) => {
       email: rows[0].email,
       phoneNumber: rows[0].phoneNumber,
       appointments: rows.map((row) => ({
-      appointments: rows.map((row) => ({
-        appointmentDate: row.appointmentDate,
-        doctorFirstName: row.doctorFirstName,
-        doctorLastName: row.doctorLastName,
-        appointmentID: row.appointmentID,
-      })),
+        appointments: rows.map((row) => ({
+          appointmentDate: row.appointmentDate,
+          doctorFirstName: row.doctorFirstName,
+          doctorLastName: row.doctorLastName,
+          appointmentID: row.appointmentID,
+        })),
         appointmentID: row.appointmentID,
       })),
     };
