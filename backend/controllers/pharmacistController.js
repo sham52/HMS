@@ -59,12 +59,7 @@ async function createPharmacist(req, res) {
 
 async function updatePharmacist(req, res) {
   try {
-    const pharmacistID = req.params.id;
-    console.log(pharmacistID);
-    // const { error } = pharmacistSchema.validate(req.body);
-    // if (error) {
-    //   return res.status(400).json({ message: error.details[0].message });
-    // }
+    const  pharmacistID  = req.params.id;
 
     // Fetch the current pharmacist data from the database
     const [pharmacistRows] = await pool.query(
@@ -101,7 +96,7 @@ async function updatePharmacist(req, res) {
         updatedPharmacistData.email,
         updatedPharmacistData.phoneNumber,
         updatedPharmacistData.password,
-        req.params.id,
+        pharmacistID,
       ]
     );
     res.json({ message: "doctor updated successfully" });

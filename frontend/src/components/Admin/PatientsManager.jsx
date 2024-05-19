@@ -25,7 +25,6 @@ import {
   FormControl,
   FormLabel,
   Input,
-  Select,
   useDisclosure,
 } from "@chakra-ui/react";
 import axios from "axios";
@@ -47,6 +46,7 @@ const PatientsManager = () => {
   });
   const { isOpen, onOpen, onClose } = useDisclosure();
   const toast = useToast();
+  const [isEdit, setIsEdit] = useState(false);
 
   useEffect(() => {
     axios
@@ -121,11 +121,59 @@ const PatientsManager = () => {
           isClosable: true,
         });
         onClose();
+        // Update the patients state to include the new patient
+        setPatients((prev) => [...prev, response.data]);
       })
       .catch((error) => {
         console.error(error);
         toast({
           title: "Error adding patient",
+          status: "error",
+          duration: 5000,
+          isClosable: true,
+        });
+      });
+  };
+
+  const openEditModal = (patient) => {
+    setPatientData({
+      patientID: patient.patientID,
+      firstName: patient.firstName,
+      lastName: patient.lastName,
+      dateOfBirth: patient.dateOfBirth,
+      gender: patient.gender,
+      email: patient.email,
+      phoneNumber: patient.phoneNumber,
+      password: "", // leave password empty for security
+      departmentID: patient.departmentID,
+    });
+    setIsEdit(true);
+    onOpen();
+  };
+
+  const updatePatient = () => {
+    axios
+      .put(`http://localhost:3000/patients/${patientData.patientID}`, patientData)
+      .then((response) => {
+        toast({
+          title: "Patient updated successfully",
+          status: "success",
+          duration: 5000,
+          isClosable: true,
+        });
+        onClose();
+        setIsEdit(false);
+        // Update the patients state to reflect the changes
+        setPatients((prev) =>
+          prev.map((patient) =>
+            patient.patientID === patientData.patientID ? response.data : patient
+          )
+        );
+      })
+      .catch((error) => {
+        console.error(error);
+        toast({
+          title: "Error updating patient",
           status: "error",
           duration: 5000,
           isClosable: true,
@@ -151,9 +199,10 @@ const PatientsManager = () => {
           <Tr>
             <Th>Select</Th>
             <Th>Patient ID</Th>
-            <Th>Name</Th>
+            <Th>First Name</Th>
             <Th>Last Name</Th>
             <Th>Email</Th>
+            <Th>Actions</Th> {/* Added Actions header */}
           </Tr>
         </Thead>
         <Tbody>
@@ -170,80 +219,71 @@ const PatientsManager = () => {
               <Td>{patient.firstName}</Td>
               <Td>{patient.lastName}</Td>
               <Td>{patient.email || "-"}</Td>
+              <Td>
+                <Button
+                  colorScheme="blue"
+                  onClick={() => openEditModal(patient)}
+                >
+                  Edit
+                </Button>
+              </Td>
             </Tr>
           ))}
         </Tbody>
       </Table>
-      <Box mt={5}>
-        <Center>
-          <HStack spacing={5}>
-            <Button colorScheme="teal" variant="solid" onClick={onOpen}>
-              Add Patient
-            </Button>
-            <Button
-              colorScheme="red"
-              variant="solid"
-              onClick={deletePatients}
-              isDisabled={selectedPatients.length === 0}
-            >
-              Delete Selected
-            </Button>
-          </HStack>
-        </Center>
-      </Box>
+      <Flex justify="center" mt={4}>
+        <HStack spacing={4}>
+          <Button colorScheme="red" onClick={deletePatients}>
+            Delete Selected
+          </Button>
+          <Button colorScheme="green" onClick={onOpen}>
+            Add Patient
+          </Button>
+        </HStack>
+      </Flex>
       <Modal isOpen={isOpen} onClose={onClose}>
         <ModalOverlay />
         <ModalContent>
-          <ModalHeader>Add Patient</ModalHeader>
+          <ModalHeader>{isEdit ? "Edit Patient" : "Add Patient"}</ModalHeader>
           <ModalCloseButton />
           <ModalBody>
-            <FormControl id="patientID" isRequired>
-              <FormLabel>Patient ID</FormLabel>
-              <Input
-                name="patientID"
-                value={patientData.patientID}
-                onChange={handleInputChange}
-              />
-            </FormControl>
-            <FormControl id="firstName" isRequired>
+            <FormControl id="firstName" mb={4}>
               <FormLabel>First Name</FormLabel>
               <Input
+                type="text"
                 name="firstName"
                 value={patientData.firstName}
                 onChange={handleInputChange}
               />
             </FormControl>
-            <FormControl id="lastName" isRequired>
+            <FormControl id="lastName" mb={4}>
               <FormLabel>Last Name</FormLabel>
               <Input
+                type="text"
                 name="lastName"
                 value={patientData.lastName}
                 onChange={handleInputChange}
               />
             </FormControl>
-            <FormControl id="dateOfBirth" isRequired>
+            <FormControl id="dateOfBirth" mb={4}>
               <FormLabel>Date of Birth</FormLabel>
               <Input
-                type="date"
+                type="text"
                 name="dateOfBirth"
                 value={patientData.dateOfBirth}
                 onChange={handleInputChange}
               />
             </FormControl>
-            <FormControl id="gender" isRequired>
+            <FormControl id="gender" mb={4}>
               <FormLabel>Gender</FormLabel>
-              <Select
+              <Input
+                type="text"
                 name="gender"
                 value={patientData.gender}
                 onChange={handleInputChange}
-              >
-                <option value="">Select Gender</option>
-                <option value="Erkek">Erkek</option>
-                <option value="Kadın">Kadın</option>
-                <option value="Diğer">Diğer</option>
-              </Select>
+              />
             </FormControl>
-            <FormControl id="email" isRequired>
+            <FormControl id="email" mb={4}>
               <FormLabel>Email</FormLabel>
               <Input
                 type="email"
@@ -252,34 +292,34 @@ const PatientsManager = () => {
                 onChange={handleInputChange}
               />
             </FormControl>
-            <FormControl id="phoneNumber" isRequired>
+            <FormControl id="phoneNumber" mb={4}>
               <FormLabel>Phone Number</FormLabel>
               <Input
+                type="text"
                 name="phoneNumber"
                 value={patientData.phoneNumber}
                 onChange={handleInputChange}
               />
             </FormControl>
-            <FormControl id="password" isRequired>
-              <FormLabel>Password</FormLabel>
-              <Input
-                type="password"
-                name="password"
-                value={patientData.password}
-                onChange={handleInputChange}
-              />
-            </FormControl>
-            <FormControl id="departmentID" isRequired>
-              <FormLabel>Department ID</FormLabel>
-              <Input
-                name="departmentID"
-                value={patientData.departmentID}
-                onChange={handleInputChange}
-              />
-            </FormControl>
+            {isEdit ? null : (
+              <FormControl id="password" mb={4}>
+                <FormLabel>Password</FormLabel>
+                <Input
+                  type="password"
+                  name="password"
+                  value={patientData.password}
+                  onChange={handleInputChange}
+                />
+              </FormControl>
+            )}
+
           </ModalBody>
           <ModalFooter>
-            <Button colorScheme="blue" mr={3} onClick={addPatient}>
+            <Button
+              colorScheme="blue"
+              mr={3}
+              onClick={isEdit ? updatePatient : addPatient}
+            >
               Save
             </Button>
             <Button variant="ghost" onClick={onClose}>

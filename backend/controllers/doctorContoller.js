@@ -51,13 +51,7 @@ async function createDoctor(req, res) {
 
 async function updateDoctor(req, res) {
   try {
-    const doctorID = req.params.id;
-    const doctor = req.body;
-    doctor.doctorID = req.params.id;
-    // const { error } = doctorSchema.validate(doctor);
-    // if (error) {
-    //   return res.status(400).json({ message: error.details[0].message });
-    // }
+    const doctorID  = req.params.id;
 
     // Fetch the current doctor data from the database
     const [doctorRows] = await pool.query(
