@@ -1,8 +1,8 @@
 import React from "react";
 import { Navigate } from "react-router-dom";
 
-const Protected = ({ authToken, children }) => {
-  if (!authToken) return <Navigate to="/login" />;
+const Protected = ({ isSignedIn, children }) => {
+  if (!isSignedIn) return <Navigate to="/login" />;
   return children;
 };
 

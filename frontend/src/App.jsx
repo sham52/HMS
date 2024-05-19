@@ -12,10 +12,12 @@ import Admin from "./components/Admin/Admin";
 import PatientMain from "./components/Patient/PatientMain";
 import PharmacistMain from "./components/Pharmacist/PharmacistMain";
 import DoctorMain from "./components/Doctor/DoctorMain";
+import Protected from "./components/Protected";
 
 import Navbar from "./components/Navbar";
 
 const App = () => {
+  const [isSignedIn, setIsSignedIn] = useState(null);
   const [authToken, setAuthToken] = useState(null);
   const navigate = useNavigate();
 
@@ -26,7 +28,6 @@ const App = () => {
     const checkAuthTokenBeforeUnload = (event) => {
       const token = getAuthTokenFromLocalStorage();
       if (!token) {
-        // Prevent the page from unloading
         event.preventDefault();
         // Prompt the user to stay on the page
         event.returnValue = "";
@@ -34,9 +35,7 @@ const App = () => {
         navigate("/login");
       }
     };
-
     window.addEventListener("beforeunload", checkAuthTokenBeforeUnload);
-
     return () => {
       window.removeEventListener("beforeunload", checkAuthTokenBeforeUnload);
     };
@@ -45,15 +44,39 @@ const App = () => {
   return (
     <>
       <AuthProvider>
-        <Navbar authToken={authToken} />
+        <Navbar isSignedIn={isSignedIn} setIsSignedIn={setIsSignedIn} />
         <Routes>
           <Route path="/" element={<Home />} />
-          <Route path="login" element={<Login />} />
-          <Route path="register" element={<Register />} />
-          <Route path="patient-main" element={<PatientMain />} />
-          <Route path="doctor-main" element={<DoctorMain />} />
+          <Route
+            path="login"
+            element={
+              <Login isSignedIn={isSignedIn} setIsSignedIn={setIsSignedIn} />
+            }
+          />
+          <Route
+            path="register"
+            element={
+              <Register isSignedIn={isSignedIn} setIsSignedIn={setIsSignedIn} />
+            }
+          />
+          <Route
+            path="patient-main"
+            element={
+              <Protected isSignedIn={isSignedIn}>
+                <PatientMain />
+              </Protected>
+            }
+          />
+          <Route
+            path="doctor-main"
+            element={
+              <Protected isSignedIn={isSignedIn}>
+                <DoctorMain />
+              </Protected>
+            }
+          />
           <Route path="pharmacist-main" element={<PharmacistMain />} />
-          <Route path="admin/*" element={<Admin />} />
+          <Route path="admin" element={<Admin />} />
         </Routes>
       </AuthProvider>
     </>

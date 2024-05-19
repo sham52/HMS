@@ -20,32 +20,27 @@ import {
 } from "@chakra-ui/react";
 import { HamburgerIcon, CloseIcon } from "@chakra-ui/icons";
 
-const Navbar = () => {
+const Navbar = ({}) => {
   const navigate = useNavigate();
   const { isOpen, onOpen, onClose } = useDisclosure();
-  const { authToken } = useAuth();
-  useEffect(() => {
-    
-  },[])
+  const { authToken, setAuthToken } = useAuth();
 
-  
-  console.log(authToken);
   const signOut = async () => {
     localStorage.clear();
-    storedAuthToken(null);
+    setAuthToken(null);
     navigate("/login");
   };
 
   const redirectUser = () => {
     const userType = localStorage.getItem("userType");
     switch (userType) {
-      case "patient":
+      case "Patient":
         navigate("/patient-main");
         break;
-      case "doctor":
+      case "Doctor":
         navigate("/doctor-main");
         break;
-      case "pharmacist":
+      case "Pharmacist":
         navigate("/pharmacist-main");
         break;
       case "Admin":
