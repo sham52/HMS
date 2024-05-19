@@ -48,18 +48,40 @@ async function createDoctor(req, res) {
     res.status(500).json({ message: "Server Error" });
   }
 }
+
 async function updateDoctor(req, res) {
   try {
-    const { doctorID } = req.params;
-    const { error } = doctorSchema.validate(req.body);
+    const doctor = req.body;
+    doctor.doctorID = req.params.id;
+    const { error } = doctorSchema.validate(doctor);
     if (error) {
       return res.status(400).json({ message: error.details[0].message });
     }
-    const { firstName, lastName, gender, departmentID } = req.body;
+    const {
+      doctorID,
+      firstName,
+      lastName,
+      dateOfBirth,
+      gender,
+      email,
+      phoneNumber,
+      password,
+      departmentID,
+    } = doctor;
     // Update the doctor in the database
     await pool.query(
-      "UPDATE Doctors SET firstName = ?, lastName = ?, gender = ?, departmentID = ? WHERE doctorID = ?",
-      [firstName, lastName, gender, departmentID, doctorID]
+      "UPDATE Doctors SET firstName = ?, lastName = ?, dateOfBirth = ?, gender = ?, email = ?, phoneNumber = ?, password = ?, departmentID = ? WHERE doctorID = ?",
+      [
+        firstName,
+        lastName,
+        dateOfBirth,
+        gender,
+        email,
+        phoneNumber,
+        password,
+        departmentID,
+        doctorID,
+      ]
     );
     res.json({ message: "Doctor updated successfully" });
   } catch (err) {

@@ -59,16 +59,19 @@ async function createPharmacist(req, res) {
 
 async function updatePharmacist(req, res) {
   try {
-    const { id } = req.params;
-    const { error } = pharmacistSchema.validate(req.body);
+    const pharmacist = req.body;
+    pharmacist.pharmacistID = req.params.id;
+    console.log(pharmacist);
+    const { error } = pharmacistSchema.validate(pharmacist);
     if (error) {
       return res.status(400).json({ message: error.details[0].message });
     }
-    const { firstName, lastName, email, phoneNumber, password } = req.body;
+    const { pharmacistID, firstName, lastName, email, phoneNumber, password } =
+      pharmacist;
     // Update the pharmacist in the database
     await pool.query(
       "UPDATE Pharmacists SET firstName = ?, lastName = ?, email = ?, phoneNumber = ?, password = ? WHERE pharmacistID = ?",
-      [firstName, lastName, email, phoneNumber, password, id]
+      [firstName, lastName, email, phoneNumber, password, pharmacistID]
     );
     res.json({ message: "Pharmacist updated successfully" });
   } catch (err) {
