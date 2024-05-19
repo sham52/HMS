@@ -111,8 +111,15 @@ const PatientsManager = () => {
   };
 
   const addPatient = () => {
+    const formattedPatientData = {
+      ...patientData,
+      patientID: patientID,
+      dateOfBirth: new Date(patientData.dateOfBirth).toISOString().slice(0, 10),
+    };
+
+    console.log(formattedPatientData);
     axios
-      .post("http://localhost:3000/patients", patientData)
+      .post("http://localhost:3000/patients", formattedPatientData)
       .then((response) => {
         toast({
           title: "Patient added successfully",
@@ -140,7 +147,7 @@ const PatientsManager = () => {
       patientID: patient.patientID,
       firstName: patient.firstName,
       lastName: patient.lastName,
-      dateOfBirth: patient.dateOfBirth,
+      dateOfBirth: new Date(patient.dateOfBirth).toISOString().slice(0, 10), // format the date
       gender: patient.gender,
       email: patient.email,
       phoneNumber: patient.phoneNumber,
@@ -153,7 +160,10 @@ const PatientsManager = () => {
 
   const updatePatient = () => {
     axios
-      .put(`http://localhost:3000/patients/${patientData.patientID}`, patientData)
+      .put(
+        `http://localhost:3000/patients/${patientData.patientID}`,
+        patientData
+      )
       .then((response) => {
         toast({
           title: "Patient updated successfully",
@@ -166,7 +176,7 @@ const PatientsManager = () => {
         // Update the patients state to reflect the changes
         setPatients((prev) =>
           prev.map((patient) =>
-            patient.patientID === patientData.patientID ? response.data : patient
+            patient.patientID === patientData.patientID ? patientData : patient
           )
         );
       })
@@ -233,7 +243,11 @@ const PatientsManager = () => {
       </Table>
       <Flex justify="center" mt={4}>
         <HStack spacing={4}>
-          <Button colorScheme="red" onClick={deletePatients}>
+          <Button
+            colorScheme="red"
+            onClick={deletePatients}
+            isDisabled={selectedPatients.length === 0}
+          >
             Delete Selected
           </Button>
           <Button colorScheme="green" onClick={onOpen}>
@@ -312,7 +326,6 @@ const PatientsManager = () => {
                 />
               </FormControl>
             )}
-
           </ModalBody>
           <ModalFooter>
             <Button
