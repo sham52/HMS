@@ -1,8 +1,9 @@
 const Joi = require("joi");
 
 const prescriptionSchema = Joi.object({
-  appointmentID: Joi.number().integer().required(),
-  pharmacistID: Joi.string().uuid().required(),
+  prescriptionID: Joi.number().required(),
+  patientID: Joi.string().required(),
+  pharmacistID: Joi.string().required(),
   prescriptionDate: Joi.date().required(),
   medicationDetails: Joi.string().required(),
 });

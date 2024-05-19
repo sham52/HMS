@@ -24,6 +24,7 @@ const {
   createPrescription,
   updatePrescription,
   deletePrescription,
+  getPrescriptionById,
 } = require("../controllers/prescriptionController");
 const {
   getAllDoctors,
@@ -82,5 +83,6 @@ router.get("/pharmacists", getAllPharmacists);
 router.post("/pharmacists", createPharmacist);
 router.put("/pharmacists/:id", updatePharmacist);
 router.delete("/pharmacists/:id", deletePharmacist);
+router.get("/pharmacists/:id", getPrescriptionById);
 
 module.exports = router;

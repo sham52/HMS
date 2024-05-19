@@ -2,8 +2,11 @@ const pool = require("../config/db.js");
 const Joi = require("joi");
 
 const prescriptionSchema = Joi.object({
-  appointmentID: Joi.number().integer().required(),
-  pharmacistID: Joi.string().uuid().required(),
+  prescriptionID: Joi.string().required(),
+  appointmentID: Joi.number().required(),
+  patientID: Joi.string().required(),
+  doctorID: Joi.string().required(),
+  pharmacistID: Joi.string().required(),
   prescriptionDate: Joi.date().required(),
   medicationDetails: Joi.string().required(),
 });
@@ -22,13 +25,13 @@ async function getPrescriptionById(req, res) {
   try {
     const { id } = req.params;
     const [prescription] = await pool.query(
-      "SELECT * FROM Prescriptions WHERE prescriptionID = ?",
+      "SELECT * FROM Prescriptions WHERE pharmacistID = ?",
       [id]
     );
     if (prescription.length === 0) {
       return res.status(404).json({ message: "Prescription not found" });
     }
-    res.json(prescription[0]);
+    res.json(prescription);
   } catch (err) {
     console.error(err);
     res.status(500).json({ message: "Server Error" });
@@ -41,11 +44,22 @@ async function createPrescription(req, res) {
     if (error) {
       return res.status(400).json({ message: error.details[0].message });
     }
-    const { appointmentID, pharmacistID, prescriptionDate, medicationDetails } =
-      req.body;
+    const {
+      prescriptionID,
+      appointmentID,
+      pharmacistID,
+      prescriptionDate,
+      medicationDetails,
+    } = req.body;
     const result = await pool.query(
-      "INSERT INTO Prescriptions (appointmentID, pharmacistID, prescriptionDate, medicationDetails) VALUES (?, ?, ?, ?)",
-      [appointmentID, pharmacistID, prescriptionDate, medicationDetails]
+      "INSERT INTO Prescriptions (prescriptionID, appointmentID, pharmacistID, prescriptionDate, medicationDetails) VALUES (?, ?, ?, ?, ?)",
+      [
+        prescriptionID,
+        appointmentID,
+        pharmacistID,
+        prescriptionDate,
+        medicationDetails,
+      ]
     );
     res.json({
       message: "Prescription created successfully",
