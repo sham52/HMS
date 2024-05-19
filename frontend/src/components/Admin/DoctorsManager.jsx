@@ -48,7 +48,7 @@ const DoctorsManager = () => {
     );
   };
 
-  const deleteDoctors = () => {
+  const deleteDoctors = async () => {
     axios
       .all(
         selectedDoctors.map((doctorID) =>

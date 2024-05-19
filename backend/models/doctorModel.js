@@ -11,7 +11,7 @@ const doctorSchema = Joi.object({
     .length(10)
     .pattern(/^[0-9]+$/)
     .required(),
-  password: Joi.string().min(8).required(),
+  password: Joi.string().required(),
   departmentID: Joi.number().integer().required(),
 });
 
