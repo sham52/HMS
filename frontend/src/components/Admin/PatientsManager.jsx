@@ -171,7 +171,7 @@ const PatientsManager = () => {
   const updatePatient = () => {
     axios
       .put(
-        http://localhost:3000/patients/${patientData.patientID},
+        "http://localhost:3000/patients/${patientData.patientID}",
         patientData
       )
       .then((response) => {
@@ -186,7 +186,6 @@ const PatientsManager = () => {
         // Update the patients state to reflect the changes
         setPatients((prev) =>
           prev.map((patient) =>
-            patient.patientID === patientData.patientID ? patientData : patient
             patient.patientID === patientData.patientID ? patientData : patient
           )
         );
