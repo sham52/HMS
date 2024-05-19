@@ -51,9 +51,9 @@ const App = () => {
           <Route path="login" element={<Login />} />
           <Route path="register" element={<Register />} />
           <Route path="patient-main" element={<PatientMain />} />
-          <Route path="/doctor-main" element={<DoctorMain />} />
-          <Route path="/pharmacist-main" element={<PharmacistMain />} />
-          <Route path="/admin/*" element={<Admin />} />
+          <Route path="doctor-main" element={<DoctorMain />} />
+          <Route path="pharmacist-main" element={<PharmacistMain />} />
+          <Route path="admin/*" element={<Admin />} />
         </Routes>
       </AuthProvider>
     </>

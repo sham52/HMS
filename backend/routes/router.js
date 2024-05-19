@@ -4,6 +4,7 @@ const {
   updatePatient,
   deletePatient,
   getPatientData,
+  getPatientDetails,
 } = require("../controllers/patientController");
 const {
   getAllAppointments,
@@ -48,33 +49,33 @@ router.post("/login", loginUser);
 // Patients routes
 router.get("/patients", getAllPatients);
 router.post("/patients", createPatient);
-router.put("/patients/:id", updatePatient); // Added :id
-router.delete("/patients/:id", deletePatient); // Added :id
-router.get("/patients/:id", getPatientData);
+router.put("/patients/:id", updatePatient);
+router.delete("/patients/:id", deletePatient);
+router.get("/patients/:patientID", getPatientDetails);
 
 // Doctors routes
 router.get("/doctors", getAllDoctors);
 router.post("/doctors", createDoctor);
-router.put("/doctors/:id", updateDoctor); // Added :id
-router.delete("/doctors/:id", deleteDoctor); // Added :id
+router.put("/doctors/:id", updateDoctor);
+router.delete("/doctors/:id", deleteDoctor);
 
 // Appointments routes
 router.get("/appointments", getAllAppointments);
 router.post("/appointments", createAppointment);
-router.put("/appointments/:id", updateAppointment); // Added :id
-router.delete("/appointments/:id", deleteAppointment); // Added :id
+router.put("/appointments/:id", updateAppointment);
+router.delete("/appointments/:id", deleteAppointment);
 router.get("/appointments/:id", getAppointmentData);
 
 // Departments routes
 router.get("/departments", getAllDepartments);
 router.post("/departments", createDepartment);
-router.put("/departments/:id", updateDepartment); // Added :id
-router.delete("/departments/:id", deleteDepartment); // Added :id
+router.put("/departments/:id", updateDepartment);
+router.delete("/departments/:id", deleteDepartment);
 
 // Prescriptions routes
 router.get("/prescriptions", getAllPrescriptions);
 router.post("/prescriptions", createPrescription);
-router.put("/prescriptions/:id", updatePrescription); // Added :id
+router.put("/prescriptions/:id", updatePrescription);
 router.delete("/prescriptions/:id", deletePrescription);
 
 router.get("/pharmacists", getAllPharmacists);

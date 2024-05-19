@@ -169,9 +169,62 @@ const loginPatient = async (req, res) => {
   }
 };
 
+const getPatientDetails = async (req, res) => {
+  try {
+    const { patientID } = req.params;
+
+    const query = `
+      SELECT 
+        pt.patientID,
+        pt.firstName,
+        pt.lastName,
+        pt.dateOfBirth,
+        pt.gender,
+        pt.email,
+        pt.phoneNumber,
+        a.appointmentDate,
+        d.firstName AS doctorFirstName,
+        d.lastName AS doctorLastName,
+        a.appointmentID
+      FROM Patients pt
+      LEFT JOIN Appointments a ON pt.patientID = a.patientID
+      LEFT JOIN Doctors d ON a.doctorID = d.doctorID
+      WHERE pt.patientID = ?;
+    `;
+
+    const [rows] = await pool.query(query, [patientID]);
+
+    if (rows.length === 0) {
+      return res.status(404).json({ message: "Patient not found" });
+    }
+
+    const patient = {
+      patientID: rows[0].patientID,
+      firstName: rows[0].firstName,
+      lastName: rows[0].lastName,
+      dateOfBirth: rows[0].dateOfBirth,
+      gender: rows[0].gender,
+      email: rows[0].email,
+      phoneNumber: rows[0].phoneNumber,
+      appointments: rows.map(row => ({
+        appointmentDate: row.appointmentDate,
+        doctorFirstName: row.doctorFirstName,
+        doctorLastName: row.doctorLastName,
+        appointmentID: row.appointmentID
+      }))
+    };
+
+    res.json(patient);
+  } catch (err) {
+    console.error("Error fetching patient details:", err);
+    res.status(500).json({ message: "Server Error" });
+  }
+};
+
+
 const getPatientData = async (req, res) => {
   try {
-    const patientID = await req.params.id;
+    const { patientID } = await req.params.id;
     console.log(patientID);
     const query = `
     SELECT 
@@ -210,4 +263,5 @@ module.exports = {
   createPatient,
   loginPatient,
   getPatientData,
+  getPatientDetails,
 };
