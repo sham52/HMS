@@ -41,6 +41,7 @@ const DoctorsManager = () => {
     email: "",
     phoneNumber: "",
     password: "",
+    departmentID: "",
   });
   const [loading, setLoading] = useState(true);
   const { isOpen, onOpen, onClose } = useDisclosure();
@@ -108,8 +109,14 @@ const DoctorsManager = () => {
   };
 
   const addDoctor = () => {
+    const formattedDoctorData = {
+      ...doctorData,
+      dateOfBirth: new Date(doctorData.dateOfBirth).toISOString().slice(0, 10),
+    };
+
+    console.log(formattedDoctorData);
     axios
-      .post("http://localhost:3000/doctors", doctorData)
+      .post("http://localhost:3000/doctors", formattedDoctorData)
       .then((response) => {
         toast({
           title: "Doctor added successfully",
@@ -130,6 +137,7 @@ const DoctorsManager = () => {
           isClosable: true,
         });
       });
+    setDoctorData([...doctorData, newDoctorData]);
   };
 
   const openEditModal = (doctor) => {
@@ -142,6 +150,7 @@ const DoctorsManager = () => {
       email: doctor.email,
       phoneNumber: doctor.phoneNumber,
       password: "", // leave password empty for security
+      departmentID: patient.departmentID,
     });
     setIsEdit(true);
     onOpen();
@@ -241,6 +250,15 @@ const DoctorsManager = () => {
           <ModalHeader>{isEdit ? "Edit Doctor" : "Add Doctor"}</ModalHeader>
           <ModalCloseButton />
           <ModalBody>
+            <FormControl id="doctorID" mb={4}>
+              <FormLabel>Doctor ID</FormLabel>
+              <Input
+                type="text"
+                name="doctorID"
+                value={doctorData.doctorID}
+                onChange={handleInputChange}
+              />
+            </FormControl>
             <FormControl id="firstName" mb={4}>
               <FormLabel>First Name</FormLabel>
               <Input
@@ -306,6 +324,15 @@ const DoctorsManager = () => {
                 />
               </FormControl>
             )}
+            <FormControl id="departmentID" mb={4}>
+              <FormLabel>Department ID</FormLabel>
+              <Input
+                type="text"
+                name="departmentID"
+                value={doctorData.departmentID}
+                onChange={handleInputChange}
+              />
+            </FormControl>
           </ModalBody>
           <ModalFooter>
             <Button

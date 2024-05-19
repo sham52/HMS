@@ -18,7 +18,7 @@ const PharmacistMain = () => {
   return (
     <Box p={4}>
       <Heading as="h1" mb={4}>
-        Pharmacist Dashboard
+        Eczacı Ekranı
       </Heading>
 
       <Box p={4} bg="gray.100" borderRadius="md">

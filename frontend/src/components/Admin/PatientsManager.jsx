@@ -42,7 +42,6 @@ const PatientsManager = () => {
     email: "",
     phoneNumber: "",
     password: "",
-    departmentID: "",
   });
   const { isOpen, onOpen, onClose } = useDisclosure();
   const toast = useToast();
@@ -113,7 +112,6 @@ const PatientsManager = () => {
   const addPatient = () => {
     const formattedPatientData = {
       ...patientData,
-      patientID: patientID,
       dateOfBirth: new Date(patientData.dateOfBirth).toISOString().slice(0, 10),
     };
 
@@ -140,6 +138,7 @@ const PatientsManager = () => {
           isClosable: true,
         });
       });
+    setPatientData([...patientData, newPatientData]);
   };
 
   const openEditModal = (patient) => {
@@ -152,7 +151,6 @@ const PatientsManager = () => {
       email: patient.email,
       phoneNumber: patient.phoneNumber,
       password: "", // leave password empty for security
-      departmentID: patient.departmentID,
     });
     setIsEdit(true);
     onOpen();
@@ -261,6 +259,15 @@ const PatientsManager = () => {
           <ModalHeader>{isEdit ? "Edit Patient" : "Add Patient"}</ModalHeader>
           <ModalCloseButton />
           <ModalBody>
+            <FormControl id="patientID" mb={4}>
+              <FormLabel>Patient ID</FormLabel>
+              <Input
+                type="text"
+                name="patientID"
+                value={patientData.patientID}
+                onChange={handleInputChange}
+              />
+            </FormControl>
             <FormControl id="firstName" mb={4}>
               <FormLabel>First Name</FormLabel>
               <Input

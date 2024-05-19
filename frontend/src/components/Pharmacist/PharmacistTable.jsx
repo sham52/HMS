@@ -22,10 +22,10 @@ const PharmacistTable = ({ pharmacistID }) => {
       <Table variant="simple">
         <Thead>
           <Tr>
-            <Th>Prescription ID</Th>
-            <Th>Patient</Th>
-            <Th>Doctor</Th>
-            <Th>Status</Th>
+            <Th>Reçete ID</Th>
+            <Th>Hasta</Th>
+            <Th>Doktor</Th>
+            <Th>Durum</Th>
           </Tr>
         </Thead>
         <Tbody>

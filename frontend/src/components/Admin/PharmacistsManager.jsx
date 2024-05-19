@@ -112,8 +112,16 @@ const PharmacistsManager = () => {
   };
 
   const addPharmacist = () => {
+    const formattedPharmacistData = {
+      ...pharmacistData,
+      dateOfBirth: new Date(pharmacistData.dateOfBirth)
+        .toISOString()
+        .slice(0, 10),
+    };
+
+    console.log(formattedPharmacistData);
     axios
-      .post("http://localhost:3000/pharmacists", pharmacistData)
+      .post("http://localhost:3000/pharmacists", formattedPharmacistData)
       .then((response) => {
         toast({
           title: "Pharmacist added successfully",
@@ -134,6 +142,7 @@ const PharmacistsManager = () => {
           isClosable: true,
         });
       });
+    setPharmacistData([...pharmacistData, newPharmacistData]);
   };
 
   const openEditModal = (pharmacist) => {
@@ -259,6 +268,15 @@ const PharmacistsManager = () => {
           </ModalHeader>
           <ModalCloseButton />
           <ModalBody>
+            <FormControl id="pharmacistID" mb={4}>
+              <FormLabel>Pharmacist ID</FormLabel>
+              <Input
+                type="text"
+                name="pharmacistID"
+                value={pharmacistData.pharmacistID}
+                onChange={handleInputChange}
+              />
+            </FormControl>
             <FormControl id="firstName" mb={4}>
               <FormLabel>First Name</FormLabel>
               <Input

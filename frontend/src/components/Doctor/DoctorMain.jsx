@@ -57,7 +57,7 @@ const DoctorMain = ({ doctorID }) => {
   return (
     <Box className="p-6 mt-16 bg-gray-100 min-h-screen">
       <Heading as="h1" size="xl" mb={6} textAlign="center">
-        My Patients
+        Hastaşarım
       </Heading>
       <Stack spacing={6}>
         {patients.map((patient) => (

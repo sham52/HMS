@@ -17,8 +17,8 @@ import Protected from "./components/Protected";
 import Navbar from "./components/Navbar";
 
 const App = () => {
+  const { authToken, setAuthToken } = useAuth();
   const [isSignedIn, setIsSignedIn] = useState(null);
-  const [authToken, setAuthToken] = useState(null);
   const navigate = useNavigate();
 
   const getAuthTokenFromLocalStorage = () => {
@@ -43,42 +43,38 @@ const App = () => {
 
   return (
     <>
-      <AuthProvider>
-        <Navbar isSignedIn={isSignedIn} setIsSignedIn={setIsSignedIn} />
-        <Routes>
-          <Route path="/" element={<Home />} />
-          <Route
-            path="login"
-            element={
-              <Login isSignedIn={isSignedIn} setIsSignedIn={setIsSignedIn} />
-            }
-          />
-          <Route
-            path="register"
-            element={
-              <Register isSignedIn={isSignedIn} setIsSignedIn={setIsSignedIn} />
-            }
-          />
-          <Route
-            path="patient-main"
-            element={
-              <Protected isSignedIn={isSignedIn}>
-                <PatientMain />
-              </Protected>
-            }
-          />
-          <Route
-            path="doctor-main"
-            element={
-              <Protected isSignedIn={isSignedIn}>
-                <DoctorMain />
-              </Protected>
-            }
-          />
-          <Route path="pharmacist-main" element={<PharmacistMain />} />
-          <Route path="admin" element={<Admin />} />
-        </Routes>
-      </AuthProvider>
+      <Navbar authToken={authToken} setAuthToken={setAuthToken} />
+      <Routes>
+        <Route path="/" element={<Home />} />
+        <Route
+          path="login"
+          element={<Login authToken={authToken} setAuthToken={setAuthToken} />}
+        />
+        <Route
+          path="register"
+          element={
+            <Register authToken={authToken} setAuthToken={setAuthToken} />
+          }
+        />
+        <Route
+          path="patient-main"
+          element={
+            <Protected>
+              <PatientMain />
+            </Protected>
+          }
+        />
+        <Route
+          path="doctor-main"
+          element={
+            <Protected>
+              <DoctorMain />
+            </Protected>
+          }
+        />
+        <Route path="pharmacist-main" element={<PharmacistMain />} />
+        <Route path="admin" element={<Admin />} />
+      </Routes>
     </>
   );
 };
