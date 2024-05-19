@@ -58,7 +58,10 @@ const Login = () => {
           actions.resetForm();
           setAuthToken(data.token);
 
-          navigate("/patient-main");
+          if (data.userType === "Doctor") navigate("/doctor-main");
+          else if (data.userType === "Pharmacist") navigate("/pharmacist-main");
+          else if (data.userType === "Admin") navigate("/admin");
+          else navigate("/patient-main");
         } else {
           console.error("Login failed");
         }

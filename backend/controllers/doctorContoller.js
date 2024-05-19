@@ -9,11 +9,35 @@ async function createDoctor(req, res) {
     if (error) {
       return res.status(400).json({ message: error.details[0].message });
     }
-    const { firstName, lastName, gender, departmentID } = req.body;
+    const {
+      doctorID,
+      firstName,
+      lastName,
+      dateOfBirth,
+      gender,
+      email,
+      phoneNumber,
+      password,
+      departmentID,
+    } = req.body;
+
+    // Hash the password
+    const hashedPassword = await bcrypt.hash(password, saltRounds);
+
     // Insert new doctor into the database
     const result = await pool.query(
-      "INSERT INTO Doctors (firstName, lastName, gender, departmentID) VALUES (?, ?, ?, ?)",
-      [firstName, lastName, gender, departmentID]
+      "INSERT INTO Doctors (doctorID, firstName, lastName, dateOfBirth, gender, email, phoneNumber, password, departmentID) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)",
+      [
+        doctorID,
+        firstName,
+        lastName,
+        dateOfBirth,
+        gender,
+        email,
+        phoneNumber,
+        hashedPassword,
+        departmentID,
+      ]
     );
     res.json({
       message: "Doctor created successfully",
