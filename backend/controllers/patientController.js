@@ -71,12 +71,14 @@ const createPatient = async (req, res) => {
 
 async function updatePatient(req, res) {
   try {
-    const { patientID } = req.params;
-    const { error } = patientSchema.validate(req.body);
+    const patient = req.body;
+    patient.patientID = req.params.id;
+    const { error } = patientSchema.validate(patient);
     if (error) {
       return res.status(400).json({ message: error.details[0].message });
     }
     const {
+      patientID,
       firstName,
       lastName,
       dateOfBirth,
@@ -206,12 +208,12 @@ const getPatientDetails = async (req, res) => {
       gender: rows[0].gender,
       email: rows[0].email,
       phoneNumber: rows[0].phoneNumber,
-      appointments: rows.map(row => ({
+      appointments: rows.map((row) => ({
         appointmentDate: row.appointmentDate,
         doctorFirstName: row.doctorFirstName,
         doctorLastName: row.doctorLastName,
-        appointmentID: row.appointmentID
-      }))
+        appointmentID: row.appointmentID,
+      })),
     };
 
     res.json(patient);
@@ -220,7 +222,6 @@ const getPatientDetails = async (req, res) => {
     res.status(500).json({ message: "Server Error" });
   }
 };
-
 
 const getPatientData = async (req, res) => {
   try {
