@@ -23,17 +23,11 @@ import { HamburgerIcon, CloseIcon } from "@chakra-ui/icons";
 const Navbar = () => {
   const navigate = useNavigate();
   const { isOpen, onOpen, onClose } = useDisclosure();
-  const { authToken } = useAuth(); // Remove userType from here
+  const { authToken } = useAuth();
 
-  useEffect(() => {
-    const storedAuthToken = localStorage.getItem("authToken");
-    if (!storedAuthToken) {
-      // navigate("/login");
-    }
-  }, [authToken, navigate]);
-
+  
   console.log(authToken);
-  const signOut = () => {
+  const signOut = async () => {
     localStorage.clear();
     storedAuthToken(null);
     navigate("/login");
@@ -51,8 +45,11 @@ const Navbar = () => {
       case "pharmacist":
         navigate("/pharmacist-main");
         break;
+      case "Admin":
+        navigate("/admin");
+        break;
       default:
-        navigate("/login");
+        navigate("/");
     }
   };
 
