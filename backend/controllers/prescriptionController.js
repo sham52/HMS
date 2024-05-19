@@ -46,15 +46,19 @@ async function createPrescription(req, res) {
     }
     const {
       prescriptionID,
+      patientID,
+      doctorID,
       appointmentID,
       pharmacistID,
       prescriptionDate,
       medicationDetails,
     } = req.body;
     const result = await pool.query(
-      "INSERT INTO Prescriptions (prescriptionID, appointmentID, pharmacistID, prescriptionDate, medicationDetails) VALUES (?, ?, ?, ?, ?)",
+      "INSERT INTO Prescriptions (prescriptionID, patientID, doctorID, appointmentID, pharmacistID, prescriptionDate, medicationDetails) VALUES (?,?, ?, ?, ?, ?, ?)",
       [
         prescriptionID,
+        patientID,
+        doctorID,
         appointmentID,
         pharmacistID,
         prescriptionDate,
