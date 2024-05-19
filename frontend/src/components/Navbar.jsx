@@ -35,6 +35,7 @@ const Navbar = () => {
   console.log(authToken);
   const signOut = () => {
     localStorage.clear();
+    storedAuthToken(null);
     navigate("/login");
   };
 
@@ -82,7 +83,7 @@ const Navbar = () => {
         <HStack spacing={8} alignItems="center">
           <Text fontSize="xl">Logo</Text>
           <HStack as="nav" spacing={4} display={{ base: "none", md: "flex" }}>
-            <Button variant="ghost" onClick={() => navigate("/main")}>
+            <Button variant="ghost" onClick={() => navigate("/")}>
               Ana Sayfa
             </Button>
             <Button variant="ghost">Hakkımızda</Button>
