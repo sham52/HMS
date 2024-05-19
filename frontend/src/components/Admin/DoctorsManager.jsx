@@ -12,16 +12,40 @@ import {
   HStack,
   Button,
   Center,
-  Heading,
+  Spinner,
   useToast,
+  Heading,
+  Modal,
+  ModalOverlay,
+  ModalContent,
+  ModalHeader,
+  ModalFooter,
+  ModalBody,
+  ModalCloseButton,
+  FormControl,
+  FormLabel,
+  Input,
+  useDisclosure,
 } from "@chakra-ui/react";
 import axios from "axios";
 
 const DoctorsManager = () => {
   const [selectedDoctors, setSelectedDoctors] = useState([]);
   const [doctors, setDoctors] = useState([]);
+  const [doctorData, setDoctorData] = useState({
+    doctorID: "",
+    firstName: "",
+    lastName: "",
+    dateOfBirth: "",
+    gender: "",
+    email: "",
+    phoneNumber: "",
+    password: "",
+  });
   const [loading, setLoading] = useState(true);
+  const { isOpen, onOpen, onClose } = useDisclosure();
   const toast = useToast();
+  const [isEdit, setIsEdit] = useState(false);
 
   useEffect(() => {
     axios
@@ -78,6 +102,81 @@ const DoctorsManager = () => {
       });
   };
 
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setDoctorData({ ...doctorData, [name]: value });
+  };
+
+  const addDoctor = () => {
+    axios
+      .post("http://localhost:3000/doctors", doctorData)
+      .then((response) => {
+        toast({
+          title: "Doctor added successfully",
+          status: "success",
+          duration: 5000,
+          isClosable: true,
+        });
+        onClose();
+        // Update the doctors state to include the new doctor
+        setDoctors((prev) => [...prev, response.data]);
+      })
+      .catch((error) => {
+        console.error(error);
+        toast({
+          title: "Error adding doctor",
+          status: "error",
+          duration: 5000,
+          isClosable: true,
+        });
+      });
+  };
+
+  const openEditModal = (doctor) => {
+    setDoctorData({
+      doctorID: doctor.doctorID,
+      firstName: doctor.firstName,
+      lastName: doctor.lastName,
+      dateOfBirth: new Date(doctor.dateOfBirth).toISOString().slice(0, 10), // format the date
+      gender: doctor.gender,
+      email: doctor.email,
+      phoneNumber: doctor.phoneNumber,
+      password: "", // leave password empty for security
+    });
+    setIsEdit(true);
+    onOpen();
+  };
+
+  const updateDoctor = () => {
+    axios
+      .put(`http://localhost:3000/doctors/${doctorData.doctorID}`, doctorData)
+      .then((response) => {
+        toast({
+          title: "Doctor updated successfully",
+          status: "success",
+          duration: 5000,
+          isClosable: true,
+        });
+        onClose();
+        setIsEdit(false);
+        // Update the doctors state to reflect the changes
+        setDoctors((prev) =>
+          prev.map((doctor) =>
+            doctor.doctorID === doctorData.doctorID ? doctorData : doctor
+          )
+        );
+      })
+      .catch((error) => {
+        console.error(error);
+        toast({
+          title: "Error updating doctor",
+          status: "error",
+          duration: 5000,
+          isClosable: true,
+        });
+      });
+  };
+
   if (loading) {
     return <Center>Loading...</Center>;
   }
@@ -95,6 +194,7 @@ const DoctorsManager = () => {
             <Th>Name</Th>
             <Th>Last Name</Th>
             <Th>Email</Th>
+            <Th>Action</Th>
           </Tr>
         </Thead>
         <Tbody>
@@ -111,6 +211,9 @@ const DoctorsManager = () => {
               <Td>{doctor.firstName}</Td>
               <Td>{doctor.lastName}</Td>
               <Td>{doctor.email || "-"}</Td>
+              <Button colorScheme="blue" onClick={() => openEditModal(doctor)}>
+                Edit
+              </Button>
             </Tr>
           ))}
         </Tbody>
@@ -118,7 +221,7 @@ const DoctorsManager = () => {
       <Box mt={5}>
         <Center>
           <HStack spacing={5}>
-            <Button colorScheme="teal" variant="solid">
+            <Button colorScheme="teal" variant="solid" onClick={onOpen}>
               Add
             </Button>
             <Button
@@ -132,6 +235,92 @@ const DoctorsManager = () => {
           </HStack>
         </Center>
       </Box>
+      <Modal isOpen={isOpen} onClose={onClose}>
+        <ModalOverlay />
+        <ModalContent>
+          <ModalHeader>{isEdit ? "Edit Doctor" : "Add Doctor"}</ModalHeader>
+          <ModalCloseButton />
+          <ModalBody>
+            <FormControl id="firstName" mb={4}>
+              <FormLabel>First Name</FormLabel>
+              <Input
+                type="text"
+                name="firstName"
+                value={doctorData.firstName}
+                onChange={handleInputChange}
+              />
+            </FormControl>
+            <FormControl id="lastName" mb={4}>
+              <FormLabel>Last Name</FormLabel>
+              <Input
+                type="text"
+                name="lastName"
+                value={doctorData.lastName}
+                onChange={handleInputChange}
+              />
+            </FormControl>
+            <FormControl id="dateOfBirth" mb={4}>
+              <FormLabel>Date of Birth</FormLabel>
+              <Input
+                type="text"
+                name="dateOfBirth"
+                value={doctorData.dateOfBirth}
+                onChange={handleInputChange}
+              />
+            </FormControl>
+            <FormControl id="gender" mb={4}>
+              <FormLabel>Gender</FormLabel>
+              <Input
+                type="text"
+                name="gender"
+                value={doctorData.gender}
+                onChange={handleInputChange}
+              />
+            </FormControl>
+            <FormControl id="email" mb={4}>
+              <FormLabel>Email</FormLabel>
+              <Input
+                type="email"
+                name="email"
+                value={doctorData.email}
+                onChange={handleInputChange}
+              />
+            </FormControl>
+            <FormControl id="phoneNumber" mb={4}>
+              <FormLabel>Phone Number</FormLabel>
+              <Input
+                type="text"
+                name="phoneNumber"
+                value={doctorData.phoneNumber}
+                onChange={handleInputChange}
+              />
+            </FormControl>
+            {isEdit ? null : (
+              <FormControl id="password" mb={4}>
+                <FormLabel>Password</FormLabel>
+                <Input
+                  type="password"
+                  name="password"
+                  value={doctorData.password}
+                  onChange={handleInputChange}
+                />
+              </FormControl>
+            )}
+          </ModalBody>
+          <ModalFooter>
+            <Button
+              colorScheme="blue"
+              mr={3}
+              onClick={isEdit ? updateDoctor : addDoctor}
+            >
+              Save
+            </Button>
+            <Button variant="ghost" onClick={onClose}>
+              Cancel
+            </Button>
+          </ModalFooter>
+        </ModalContent>
+      </Modal>
     </Box>
   );
 };
