@@ -24,6 +24,9 @@ const Navbar = () => {
   const navigate = useNavigate();
   const { isOpen, onOpen, onClose } = useDisclosure();
   const { authToken } = useAuth();
+  useEffect(() => {
+    
+  },[])
 
   
   console.log(authToken);
