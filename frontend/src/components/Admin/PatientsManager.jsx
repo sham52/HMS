@@ -21,7 +21,12 @@ const addPatient = () => {
 };
 
 const deletePatients = (patientsIDs) => {
-  console.log(patientsIDs);
+  patientsIDs.forEach((patientID) => {
+    axios
+      .delete(`http://localhost:3000/patients/${patientID}`)
+      .then((res) => console.log(res.data.message))
+      .catch((err) => console.error(err));
+  });
 };
 
 const PatientsManager = () => {

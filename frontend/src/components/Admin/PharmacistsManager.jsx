@@ -21,7 +21,12 @@ const addPharmacist = () => {
 };
 
 const deletePharmacists = (pharmacistsIDs) => {
-  console.log(pharmacistsIDs);
+  pharmacistsIDs.forEach((pharmacistID) => {
+    axios
+      .delete(`http://localhost:3000/pharmacists/${pharmacistID}`)
+      .then((res) => console.log(res.data.message))
+      .catch((err) => console.error(err));
+  });
 };
 
 const PharmacistsManager = () => {

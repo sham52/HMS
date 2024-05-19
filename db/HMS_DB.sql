@@ -46,9 +46,9 @@ CREATE TABLE Appointments (
     patientID VARCHAR(11),
     doctorID VARCHAR(11),
     departmentID INT,
-    FOREIGN KEY (patientID) REFERENCES Patients(patientID),
-    FOREIGN KEY (doctorID) REFERENCES Doctors(doctorID),
-    FOREIGN KEY (departmentID) REFERENCES Departments(departmentID)
+    FOREIGN KEY (patientID) REFERENCES Patients(patientID) ON DELETE CASCADE,
+    FOREIGN KEY (doctorID) REFERENCES Doctors(doctorID) ON DELETE CASCADE,
+    FOREIGN KEY (departmentID) REFERENCES Departments(departmentID) 
 );
 
 
@@ -60,11 +60,12 @@ CREATE TABLE Prescriptions (
     pharmacistID VARCHAR(11),
     prescriptionDate DATE,
     medicationDetails VARCHAR(255),
-    FOREIGN KEY (appointmentID) REFERENCES Appointments(appointmentID),
-    FOREIGN KEY (pharmacistID) REFERENCES Pharmacists(pharmacistID),
-    FOREIGN KEY (doctorID) REFERENCES Doctors(doctorID),
-    FOREIGN KEY (patientID) REFERENCES Patients(patientID)
+    FOREIGN KEY (appointmentID) REFERENCES Appointments(appointmentID) ON DELETE CASCADE,
+    FOREIGN KEY (pharmacistID) REFERENCES Pharmacists(pharmacistID) ON DELETE CASCADE,
+    FOREIGN KEY (doctorID) REFERENCES Doctors(doctorID) ON DELETE CASCADE,
+    FOREIGN KEY (patientID) REFERENCES Patients(patientID) ON DELETE CASCADE
 );
+
 
 
 

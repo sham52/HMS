@@ -17,11 +17,19 @@ import axios from "axios";
 import { useState } from "react";
 
 const addDoctor = () => {
-  console.log("Add doctor");
+  axios
+    .post("http://localhost:3000/doctors", doctor)
+    .then((res) => console.log(res.data.message))
+    .catch((err) => console.error(err));
 };
 
 const deleteDoctors = (doctorsIDs) => {
-  console.log(doctorsIDs);
+  doctorsIDs.forEach((doctorID) => {
+    axios
+      .delete(`http://localhost:3000/doctors/${doctorID}`)
+      .then((res) => console.log(res.data.message))
+      .catch((err) => console.error(err));
+  });
 };
 
 const DoctorsManager = () => {
@@ -81,11 +89,7 @@ const DoctorsManager = () => {
       <Box mt={5}>
         <Center>
           <HStack spacing={5}>
-            <Button
-              colorScheme="teal"
-              variant="solid"
-              onClick={() => addDoctor()}
-            >
+            <Button colorScheme="teal" variant="solid">
               Add
             </Button>
             <Button

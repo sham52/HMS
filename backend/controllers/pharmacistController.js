@@ -28,7 +28,7 @@ async function createPharmacist(req, res) {
 
 async function updatePharmacist(req, res) {
   try {
-    const { pharmacistID } = req.params;
+    const { id } = req.params;
     const { error } = pharmacistSchema.validate(req.body);
     if (error) {
       return res.status(400).json({ message: error.details[0].message });
@@ -37,7 +37,7 @@ async function updatePharmacist(req, res) {
     // Update the pharmacist in the database
     await pool.query(
       "UPDATE Pharmacists SET firstName = ?, lastName = ?, email = ?, phoneNumber = ?, password = ? WHERE pharmacistID = ?",
-      [firstName, lastName, email, phoneNumber, password, pharmacistID]
+      [firstName, lastName, email, phoneNumber, password, id]
     );
     res.json({ message: "Pharmacist updated successfully" });
   } catch (err) {
@@ -48,11 +48,9 @@ async function updatePharmacist(req, res) {
 
 async function deletePharmacist(req, res) {
   try {
-    const { pharmacistID } = req.params;
+    const { id } = req.params;
     // Delete the pharmacist from the database
-    await pool.query("DELETE FROM Pharmacists WHERE pharmacistID = ?", [
-      pharmacistID,
-    ]);
+    await pool.query("DELETE FROM Pharmacists WHERE pharmacistID = ?", [id]);
     res.json({ message: "Pharmacist deleted successfully" });
   } catch (err) {
     console.error(err);

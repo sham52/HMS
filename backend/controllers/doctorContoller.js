@@ -3,7 +3,6 @@ const { doctorSchema } = require("../models/doctorModel");
 const bcrypt = require("bcrypt");
 const saltRounds = 10;
 
-
 async function createDoctor(req, res) {
   try {
     const { error } = doctorSchema.validate(req.body);
@@ -47,9 +46,9 @@ async function updateDoctor(req, res) {
 
 async function deleteDoctor(req, res) {
   try {
-    const { doctorID } = req.params;
+    const { id } = req.params;
     // Delete the doctor from the database
-    await pool.query("DELETE FROM Doctors WHERE doctorID = ?", [doctorID]);
+    await pool.query("DELETE FROM Doctors WHERE doctorID = ?", [id]);
     res.json({ message: "Doctor deleted successfully" });
   } catch (err) {
     console.error(err);
