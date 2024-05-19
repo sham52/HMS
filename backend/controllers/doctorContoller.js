@@ -48,10 +48,12 @@ async function createDoctor(req, res) {
     res.status(500).json({ message: "Server Error" });
   }
 }
+
 async function updateDoctor(req, res) {
   try {
-    const { doctorID } = req.params;
-    const { error } = doctorSchema.validate(req.body);
+    const doctor = req.body;
+    doctor.doctorID = req.params.id;
+    const { error } = doctorSchema.validate(doctor);
     if (error) {
       return res.status(400).json({ message: error.details[0].message });
     }
