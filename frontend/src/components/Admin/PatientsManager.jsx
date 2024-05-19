@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import {
   Box,
   Flex,
@@ -12,49 +12,88 @@ import {
   HStack,
   Button,
   Center,
+  Spinner,
+  useToast,
+  Heading,
 } from "@chakra-ui/react";
 import axios from "axios";
-import { useState } from "react";
-
-const addPatient = () => {
-  console.log("Add patient");
-};
-
-const deletePatients = (patientsIDs) => {
-  patientsIDs.forEach((patientID) => {
-    axios
-      .delete(`http://localhost:3000/patients/${patientID}`)
-      .then((res) => console.log(res.data.message))
-      .catch((err) => console.error(err));
-  });
-};
 
 const PatientsManager = () => {
+  const [patients, setPatients] = useState([]);
   const [selectedPatients, setSelectedPatients] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const toast = useToast();
 
-  const handleCheck = (patientsID, isChecked) => {
-    if (isChecked) {
-      setSelectedPatients([...selectedPatients, patientsID]);
-    } else {
-      setSelectedPatients(selectedPatients.filter((id) => id !== patientsID));
-    }
-  };
-
-  const [patients, setPatients] = React.useState([]);
-
-  React.useEffect(() => {
+  useEffect(() => {
     axios
       .get("http://localhost:3000/patients")
       .then((response) => {
         setPatients(response.data);
-        console.log(response.data);
+        setLoading(false);
       })
-      .catch((error) => console.error(error));
-  }, []);
+      .catch((error) => {
+        console.error(error);
+        setLoading(false);
+        toast({
+          title: "Error fetching patients",
+          status: "error",
+          duration: 5000,
+          isClosable: true,
+        });
+      });
+  }, [toast]);
+
+  const handleCheck = (patientID, isChecked) => {
+    setSelectedPatients((prev) =>
+      isChecked ? [...prev, patientID] : prev.filter((id) => id !== patientID)
+    );
+  };
+
+  const deletePatients = () => {
+    axios
+      .all(
+        selectedPatients.map((patientID) =>
+          axios.delete(`http://localhost:3000/patients/${patientID}`)
+        )
+      )
+      .then(() => {
+        setPatients((prev) =>
+          prev.filter(
+            (patient) => !selectedPatients.includes(patient.patientID)
+          )
+        );
+        setSelectedPatients([]);
+        toast({
+          title: "Patients deleted successfully",
+          status: "success",
+          duration: 5000,
+          isClosable: true,
+        });
+      })
+      .catch((error) => {
+        console.error(error);
+        toast({
+          title: "Error deleting patients",
+          status: "error",
+          duration: 5000,
+          isClosable: true,
+        });
+      });
+  };
+
+  if (loading) {
+    return (
+      <Center>
+        <Spinner />
+      </Center>
+    );
+  }
 
   return (
-    <div>
-      <h1>Patients Manager</h1>
+    <Box>
+      <Heading as="h2" mb={6} textAlign="center">
+        Patients Manager
+      </Heading>
       <Table variant="simple">
         <Thead>
           <Tr>
@@ -66,8 +105,8 @@ const PatientsManager = () => {
           </Tr>
         </Thead>
         <Tbody>
-          {patients.map((patient, index) => (
-            <Tr key={index}>
+          {patients.map((patient) => (
+            <Tr key={patient.patientID}>
               <Td>
                 <Checkbox
                   onChange={(e) =>
@@ -89,21 +128,22 @@ const PatientsManager = () => {
             <Button
               colorScheme="teal"
               variant="solid"
-              onClick={() => addPatient()}
+              onClick={() => console.log("Add patient")}
             >
               Add
             </Button>
             <Button
               colorScheme="red"
               variant="solid"
-              onClick={() => deletePatients(selectedPatients)}
+              onClick={deletePatients}
+              isDisabled={selectedPatients.length === 0}
             >
               Delete Selected
             </Button>
           </HStack>
         </Center>
       </Box>
-    </div>
+    </Box>
   );
 };
 

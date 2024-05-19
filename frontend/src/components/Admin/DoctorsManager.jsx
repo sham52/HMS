@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import {
   Box,
   Flex,
@@ -12,52 +12,81 @@ import {
   HStack,
   Button,
   Center,
+  Heading,
+  useToast,
 } from "@chakra-ui/react";
 import axios from "axios";
-import { useState } from "react";
-
-const addDoctor = () => {
-  axios
-    .post("http://localhost:3000/doctors", doctor)
-    .then((res) => console.log(res.data.message))
-    .catch((err) => console.error(err));
-};
-
-const deleteDoctors = (doctorsIDs) => {
-  doctorsIDs.forEach((doctorID) => {
-    axios
-      .delete(`http://localhost:3000/doctors/${doctorID}`)
-      .then((res) => console.log(res.data.message))
-      .catch((err) => console.error(err));
-  });
-};
 
 const DoctorsManager = () => {
   const [selectedDoctors, setSelectedDoctors] = useState([]);
+  const [doctors, setDoctors] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const toast = useToast();
 
-  const handleCheck = (doctorsID, isChecked) => {
-    if (isChecked) {
-      setSelectedDoctors([...selectedDoctors, doctorsID]);
-    } else {
-      setSelectedDoctors(selectedDoctors.filter((id) => id !== doctorsID));
-    }
-  };
-
-  const [doctors, setDoctors] = React.useState([]);
-
-  React.useEffect(() => {
+  useEffect(() => {
     axios
       .get("http://localhost:3000/doctors")
       .then((response) => {
         setDoctors(response.data);
-        console.log(response.data);
+        setLoading(false);
       })
-      .catch((error) => console.error(error));
-  }, []);
+      .catch((error) => {
+        console.error(error);
+        setLoading(false);
+        toast({
+          title: "Error fetching doctors",
+          status: "error",
+          duration: 5000,
+          isClosable: true,
+        });
+      });
+  }, [toast]);
+
+  const handleCheck = (doctorID, isChecked) => {
+    setSelectedDoctors((prev) =>
+      isChecked ? [...prev, doctorID] : prev.filter((id) => id !== doctorID)
+    );
+  };
+
+  const deleteDoctors = () => {
+    axios
+      .all(
+        selectedDoctors.map((doctorID) =>
+          axios.delete(`http://localhost:3000/doctors/${doctorID}`)
+        )
+      )
+      .then(() => {
+        setDoctors((prev) =>
+          prev.filter((doctor) => !selectedDoctors.includes(doctor.doctorID))
+        );
+        setSelectedDoctors([]);
+        toast({
+          title: "Doctors deleted successfully",
+          status: "success",
+          duration: 5000,
+          isClosable: true,
+        });
+      })
+      .catch((error) => {
+        console.error(error);
+        toast({
+          title: "Error deleting doctors",
+          status: "error",
+          duration: 5000,
+          isClosable: true,
+        });
+      });
+  };
+
+  if (loading) {
+    return <Center>Loading...</Center>;
+  }
 
   return (
-    <div>
-      <h1>Doctors Manager</h1>
+    <Box>
+      <Heading as="h2" mb={6} textAlign="center">
+        Doctors Manager
+      </Heading>
       <Table variant="simple">
         <Thead>
           <Tr>
@@ -69,8 +98,8 @@ const DoctorsManager = () => {
           </Tr>
         </Thead>
         <Tbody>
-          {doctors.map((doctor, index) => (
-            <Tr key={index}>
+          {doctors.map((doctor) => (
+            <Tr key={doctor.doctorID}>
               <Td>
                 <Checkbox
                   onChange={(e) =>
@@ -95,14 +124,15 @@ const DoctorsManager = () => {
             <Button
               colorScheme="red"
               variant="solid"
-              onClick={() => deleteDoctors(selectedDoctors)}
+              onClick={deleteDoctors}
+              isDisabled={selectedDoctors.length === 0}
             >
               Delete Selected
             </Button>
           </HStack>
         </Center>
       </Box>
-    </div>
+    </Box>
   );
 };
 

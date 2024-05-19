@@ -1,77 +1,41 @@
-import React from "react";
+import React, { useState } from "react";
 import { Box, Heading, Flex, Button } from "@chakra-ui/react";
-import { useNavigate } from "react-router-dom";
-import { Routes, Route } from "react-router-dom";
 import PatientsManager from "./PatientsManager";
 import DoctorsManager from "./DoctorsManager";
 import PharmacistsManager from "./PharmacistsManager";
 
 const Admin = () => {
-  const navigate = useNavigate();
+  const [currentManager, setCurrentManager] = useState("PatientsManager");
 
-  const handlePatientsClick = () => {
-    navigate("PatientsManager");
-  };
-
-  const handleDoctorsClick = () => {
-    navigate("DoctorsManager");
-  };
-
-  const handlePharmacistsClick = () => {
-    navigate("PharmacistsManager");
+  const managerComponents = {
+    PatientsManager: <PatientsManager />,
+    DoctorsManager: <DoctorsManager />,
+    PharmacistsManager: <PharmacistsManager />,
   };
 
   return (
     <Box height="100vh" p={0}>
-      <Heading as="h1" mb={0} textAlign="center">
+      <Heading as="h1" mb={4} textAlign="center">
         Admin Panel
       </Heading>
-      <Flex height="100vh" justify="center" align="center">
-        <Box p={4}>
-          <Heading as="h1" mb={4} textAlign="center">
-            Admin Panel
-          </Heading>
-
-          <Flex justify="center">
-            <Box p={4} bg="gray.100" borderRadius="md" mx={4}>
-              <Button
-                colorScheme="blue"
-                mb={2}
-                w="100%"
-                onClick={handlePatientsClick}
-              >
-                Manage Patients
-              </Button>
-            </Box>
-
-            <Box p={4} bg="gray.100" borderRadius="md" mx={4}>
-              <Button
-                colorScheme="blue"
-                mb={2}
-                w="100%"
-                onClick={handleDoctorsClick}
-              >
-                Manage Doctors
-              </Button>
-            </Box>
-
-            <Box p={4} bg="gray.100" borderRadius="md" mx={4}>
-              <Button
-                colorScheme="blue"
-                mb={2}
-                w="100%"
-                onClick={handlePharmacistsClick}
-              >
-                Manage Pharmacists
-              </Button>
-            </Box>
+      <Flex height="calc(100vh - 60px)" justify="center" align="center">
+        <Box>
+          <Flex justify="center" gap={6} mb={8}>
+            {["PatientsManager", "DoctorsManager", "PharmacistsManager"].map(
+              (manager) => (
+                <Box p={4} bg="gray.100" borderRadius="md" key={manager}>
+                  <Button
+                    colorScheme="blue"
+                    w="100%"
+                    onClick={() => setCurrentManager(manager)}
+                  >
+                    {`Manage ${manager.replace("Manager", "")}`}
+                  </Button>
+                </Box>
+              )
+            )}
           </Flex>
-
-          <Routes>
-            <Route path="PatientsManager" element={<PatientsManager />} />
-            <Route path="DoctorsManager" element={<DoctorsManager />} />
-            <Route path="PharmacistsManager" element={<PharmacistsManager />} />
-          </Routes>
+          <Box>{managerComponents[currentManager]}</Box>
         </Box>
       </Flex>
     </Box>

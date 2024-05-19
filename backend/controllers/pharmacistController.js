@@ -1,5 +1,6 @@
 const pool = require("../config/db");
 const { pharmacistSchema } = require("../models/pharmacistModel");
+const jwt = require("jsonwebtoken");
 
 const bcrypt = require("bcrypt");
 const saltRounds = 10;
@@ -10,15 +11,45 @@ async function createPharmacist(req, res) {
     if (error) {
       return res.status(400).json({ message: error.details[0].message });
     }
-    const { firstName, lastName, email, phoneNumber, password } = req.body;
+    const {
+      pharmacistID,
+      firstName,
+      lastName,
+      dateOfBirth,
+      gender,
+      email,
+      phoneNumber,
+      password,
+    } = req.body;
+
+    const hashedPassword = await bcrypt.hash(password, saltRounds);
     // Insert new pharmacist into the database
-    const result = await pool.query(
-      "INSERT INTO Pharmacists (firstName, lastName, email, phoneNumber, password) VALUES (?, ?, ?, ?, ?)",
-      [firstName, lastName, email, phoneNumber, password]
+    let query =
+      "INSERT INTO Pharmacists (pharmacistID, firstName, lastName, dateOfBirth, gender, email, phoneNumber, password) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+    let values = [
+      pharmacistID,
+      firstName,
+      lastName,
+      dateOfBirth,
+      gender,
+      email,
+      phoneNumber,
+      hashedPassword,
+    ];
+
+    const result = await pool.query(query, values);
+
+    // Create and send the token
+    const token = jwt.sign(
+      { pharmacistID: result.insertId },
+      process.env.TOKEN_SECRET
     );
+
     res.json({
       message: "Pharmacist created successfully",
-      pharmacistID: result.insertId,
+      pharmacistID: pharmacistID,
+      userType: "Pharmacist",
+      token: token,
     });
   } catch (err) {
     console.error(err);

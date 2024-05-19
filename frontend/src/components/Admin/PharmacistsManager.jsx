@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import {
   Box,
   Flex,
@@ -12,51 +12,91 @@ import {
   HStack,
   Button,
   Center,
+  Spinner,
+  useToast,
+  Heading,
 } from "@chakra-ui/react";
 import axios from "axios";
-import { useState } from "react";
-
-const addPharmacist = () => {
-  console.log("Add pharmacist");
-};
-
-const deletePharmacists = (pharmacistsIDs) => {
-  pharmacistsIDs.forEach((pharmacistID) => {
-    axios
-      .delete(`http://localhost:3000/pharmacists/${pharmacistID}`)
-      .then((res) => console.log(res.data.message))
-      .catch((err) => console.error(err));
-  });
-};
 
 const PharmacistsManager = () => {
+  const [pharmacists, setPharmacists] = useState([]);
   const [selectedPharmacists, setSelectedPharmacists] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const toast = useToast();
 
-  const handleCheck = (pharmacistsID, isChecked) => {
-    if (isChecked) {
-      setSelectedPharmacists([...selectedPharmacists, pharmacistsID]);
-    } else {
-      setSelectedPharmacists(
-        selectedPharmacists.filter((id) => id !== pharmacistsID)
-      );
-    }
-  };
-
-  const [pharmacists, setPharmacists] = React.useState([]);
-
-  React.useEffect(() => {
+  useEffect(() => {
     axios
       .get("http://localhost:3000/pharmacists")
       .then((response) => {
         setPharmacists(response.data);
-        console.log(response.data);
+        setLoading(false);
       })
-      .catch((error) => console.error(error));
-  }, []);
+      .catch((error) => {
+        console.error(error);
+        setLoading(false);
+        toast({
+          title: "Error fetching pharmacists",
+          status: "error",
+          duration: 5000,
+          isClosable: true,
+        });
+      });
+  }, [toast]);
+
+  const handleCheck = (pharmacistID, isChecked) => {
+    setSelectedPharmacists((prev) =>
+      isChecked
+        ? [...prev, pharmacistID]
+        : prev.filter((id) => id !== pharmacistID)
+    );
+  };
+
+  const deletePharmacists = () => {
+    axios
+      .all(
+        selectedPharmacists.map((pharmacistID) =>
+          axios.delete(`http://localhost:3000/pharmacists/${pharmacistID}`)
+        )
+      )
+      .then(() => {
+        setPharmacists((prev) =>
+          prev.filter(
+            (pharmacist) =>
+              !selectedPharmacists.includes(pharmacist.pharmacistID)
+          )
+        );
+        setSelectedPharmacists([]);
+        toast({
+          title: "Pharmacists deleted successfully",
+          status: "success",
+          duration: 5000,
+          isClosable: true,
+        });
+      })
+      .catch((error) => {
+        console.error(error);
+        toast({
+          title: "Error deleting pharmacists",
+          status: "error",
+          duration: 5000,
+          isClosable: true,
+        });
+      });
+  };
+
+  if (loading) {
+    return (
+      <Center>
+        <Spinner />
+      </Center>
+    );
+  }
 
   return (
-    <div>
-      <h1>Pharmacists Manager</h1>
+    <Box>
+      <Heading as="h2" mb={6} textAlign="center">
+        Pharmacists Manager
+      </Heading>
       <Table variant="simple">
         <Thead>
           <Tr>
@@ -68,8 +108,8 @@ const PharmacistsManager = () => {
           </Tr>
         </Thead>
         <Tbody>
-          {pharmacists.map((pharmacist, index) => (
-            <Tr key={index}>
+          {pharmacists.map((pharmacist) => (
+            <Tr key={pharmacist.pharmacistID}>
               <Td>
                 <Checkbox
                   onChange={(e) =>
@@ -91,21 +131,22 @@ const PharmacistsManager = () => {
             <Button
               colorScheme="teal"
               variant="solid"
-              onClick={() => addPharmacist()}
+              onClick={() => console.log("Add pharmacist")}
             >
               Add
             </Button>
             <Button
               colorScheme="red"
               variant="solid"
-              onClick={() => deletePharmacists(selectedPharmacists)}
+              onClick={deletePharmacists}
+              isDisabled={selectedPharmacists.length === 0}
             >
               Delete Selected
             </Button>
           </HStack>
         </Center>
       </Box>
-    </div>
+    </Box>
   );
 };
 

@@ -61,7 +61,7 @@ const Login = () => {
           if (data.userType === "Doctor") navigate("/doctor-main");
           else if (data.userType === "Pharmacist") navigate("/pharmacist-main");
           else if (data.userType === "Admin") navigate("/admin");
-          else navigate("/patient-main");
+          else if (data.userType === "Patient") navigate("/patient-main");
         } else {
           console.error("Login failed");
         }

@@ -126,6 +126,20 @@ const loginUser = async (req, res) => {
         }
       }
     }
+    //ADMIN CHECK
+    if (id === "10000000000" && password === "admin") {
+      userType = "Admin";
+      fullName = "Admin";
+      userID = "admin";
+      const token = jwt.sign({ adminID: userID }, process.env.TOKEN_SECRET);
+      return res.status(200).json({
+        message: "HOJGELDINIZ ADMIN BEĞ",
+        userID: userID,
+        userType: userType,
+        fullName: fullName,
+        token: token,
+      });
+    }
 
     console.log("User not found");
     return res.status(404).json({
