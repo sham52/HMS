@@ -55,13 +55,46 @@ async function updateDoctor(req, res) {
     if (error) {
       return res.status(400).json({ message: error.details[0].message });
     }
-    const { firstName, lastName, gender, departmentID } = req.body;
+
+    // Fetch the current doctor data from the database
+    const [doctorRows] = await pool.query(
+      "SELECT * FROM doctors WHERE doctorID = ?",
+      [doctorID]
+    );
+
+    if (doctorRows.length === 0) {
+      return res.status(404).json({ message: "doctor not found" });
+    }
+
+    const currentDoctorData = doctorRows[0];
+
+    // Merge current data with new data
+    const updatedDoctorData = {
+      firstName: req.body.firstName || currentDoctorData.firstName,
+      lastName: req.body.lastName || currentDoctorData.lastName,
+      dateOfBirth: req.body.dateOfBirth || currentDoctorData.dateOfBirth,
+      gender: req.body.gender || currentDoctorData.gender,
+      email: req.body.email || currentDoctorData.email,
+      phoneNumber: req.body.phoneNumber || currentDoctorData.phoneNumber,
+      password: req.body.password || currentDoctorData.password,
+    };
+
     // Update the doctor in the database
     await pool.query(
-      "UPDATE Doctors SET firstName = ?, lastName = ?, gender = ?, departmentID = ? WHERE doctorID = ?",
-      [firstName, lastName, gender, departmentID, doctorID]
+      "UPDATE doctors SET firstName = ?, lastName = ?, dateOfBirth = ?, gender = ?, email = ?, phoneNumber = ?, password = ? WHERE doctorID = ?",
+      [
+        updatedDoctorData.firstName,
+        updatedDoctorData.lastName,
+        updatedDoctorData.dateOfBirth,
+        updatedDoctorData.gender,
+        updatedDoctorData.email,
+        updatedDoctorData.phoneNumber,
+        updatedDoctorData.password,
+        doctorID,
+      ]
     );
-    res.json({ message: "Doctor updated successfully" });
+
+    res.json({ message: "doctor updated successfully" });
   } catch (err) {
     console.error(err);
     res.status(500).json({ message: "Server Error" });

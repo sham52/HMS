@@ -76,29 +76,45 @@ async function updatePatient(req, res) {
     if (error) {
       return res.status(400).json({ message: error.details[0].message });
     }
-    const {
-      firstName,
-      lastName,
-      dateOfBirth,
-      gender,
-      email,
-      phoneNumber,
-      password,
-    } = req.body;
+
+    // Fetch the current patient data from the database
+    const [patientRows] = await pool.query(
+      "SELECT * FROM Patients WHERE patientID = ?",
+      [patientID]
+    );
+
+    if (patientRows.length === 0) {
+      return res.status(404).json({ message: "Patient not found" });
+    }
+
+    const currentPatientData = patientRows[0];
+
+    // Merge current data with new data
+    const updatedPatientData = {
+      firstName: req.body.firstName || currentPatientData.firstName,
+      lastName: req.body.lastName || currentPatientData.lastName,
+      dateOfBirth: req.body.dateOfBirth || currentPatientData.dateOfBirth,
+      gender: req.body.gender || currentPatientData.gender,
+      email: req.body.email || currentPatientData.email,
+      phoneNumber: req.body.phoneNumber || currentPatientData.phoneNumber,
+      password: req.body.password || currentPatientData.password,
+    };
+
     // Update the patient in the database
     await pool.query(
       "UPDATE Patients SET firstName = ?, lastName = ?, dateOfBirth = ?, gender = ?, email = ?, phoneNumber = ?, password = ? WHERE patientID = ?",
       [
-        firstName,
-        lastName,
-        dateOfBirth,
-        gender,
-        email,
-        phoneNumber,
-        password,
+        updatedPatientData.firstName,
+        updatedPatientData.lastName,
+        updatedPatientData.dateOfBirth,
+        updatedPatientData.gender,
+        updatedPatientData.email,
+        updatedPatientData.phoneNumber,
+        updatedPatientData.password,
         patientID,
       ]
     );
+
     res.json({ message: "Patient updated successfully" });
   } catch (err) {
     console.error(err);
@@ -206,12 +222,12 @@ const getPatientDetails = async (req, res) => {
       gender: rows[0].gender,
       email: rows[0].email,
       phoneNumber: rows[0].phoneNumber,
-      appointments: rows.map(row => ({
+      appointments: rows.map((row) => ({
         appointmentDate: row.appointmentDate,
         doctorFirstName: row.doctorFirstName,
         doctorLastName: row.doctorLastName,
-        appointmentID: row.appointmentID
-      }))
+        appointmentID: row.appointmentID,
+      })),
     };
 
     res.json(patient);
@@ -220,7 +236,6 @@ const getPatientDetails = async (req, res) => {
     res.status(500).json({ message: "Server Error" });
   }
 };
-
 
 const getPatientData = async (req, res) => {
   try {

@@ -59,24 +59,55 @@ async function createPharmacist(req, res) {
 
 async function updatePharmacist(req, res) {
   try {
-    const { id } = req.params;
+    const { pharmacistID } = req.params;
     const { error } = pharmacistSchema.validate(req.body);
     if (error) {
       return res.status(400).json({ message: error.details[0].message });
     }
-    const { firstName, lastName, email, phoneNumber, password } = req.body;
+
+    // Fetch the current pharmacist data from the database
+    const [pharmacistRows] = await pool.query(
+      "SELECT * FROM pharmacists WHERE pharmacistID = ?",
+      [pharmacistID]
+    );
+
+    if (pharmacistRows.length === 0) {
+      return res.status(404).json({ message: "pharmacist not found" });
+    }
+
+    const currentPharmacistData = pharmacistRows[0];
+
+    // Merge current data with new data
+    const updatedPharmacistData = {
+      firstName: req.body.firstName || currentPharmacistData.firstName,
+      lastName: req.body.lastName || currentPharmacistData.lastName,
+      dateOfBirth: req.body.dateOfBirth || currentPharmacistData.dateOfBirth,
+      gender: req.body.gender || currentPharmacistData.gender,
+      email: req.body.email || currentPharmacistData.email,
+      phoneNumber: req.body.phoneNumber || currentPharmacistData.phoneNumber,
+      password: req.body.password || currentPharmacistData.password,
+    };
+
     // Update the pharmacist in the database
     await pool.query(
-      "UPDATE Pharmacists SET firstName = ?, lastName = ?, email = ?, phoneNumber = ?, password = ? WHERE pharmacistID = ?",
-      [firstName, lastName, email, phoneNumber, password, id]
+      "UPDATE pharmacists SET firstName = ?, lastName = ?, dateOfBirth = ?, gender = ?, email = ?, phoneNumber = ?, password = ? WHERE pharmacistID = ?",
+      [
+        updatedPharmacistData.firstName,
+        updatedPharmacistData.lastName,
+        updatedPharmacistData.dateOfBirth,
+        updatedPharmacistData.gender,
+        updatedPharmacistData.email,
+        updatedPharmacistData.phoneNumber,
+        updatedPharmacistData.password,
+      ]
     );
-    res.json({ message: "Pharmacist updated successfully" });
+
+    res.json({ message: "doctor updated successfully" });
   } catch (err) {
     console.error(err);
     res.status(500).json({ message: "Server Error" });
   }
 }
-
 async function deletePharmacist(req, res) {
   try {
     const { id } = req.params;
