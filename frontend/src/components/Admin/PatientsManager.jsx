@@ -26,6 +26,7 @@ import {
   FormLabel,
   Input,
   useDisclosure,
+  Select,
 } from "@chakra-ui/react";
 import axios from "axios";
 
@@ -103,10 +104,21 @@ const PatientsManager = () => {
         });
       });
   };
-
   const handleInputChange = (e) => {
     const { name, value } = e.target;
-    setPatientData({ ...patientData, [name]: value });
+
+    // Convert date to the required format if the field is dateOfBirth
+    const convertedValue =
+      name === "dateOfBirth" ? convertDateFormat(value) : value;
+
+    setPatientData({ ...patientData, [name]: convertedValue });
+  };
+
+  const convertDateFormat = (dateString) => {
+    const parts = dateString.split("/");
+    if (parts.length !== 3) return dateString; // Return the original string if format is incorrect
+    const [month, day, year] = parts;
+    return `${year}-${month.padStart(2, "0")}-${day.padStart(2, "0")}`;
   };
 
   const addPatient = () => {
@@ -159,7 +171,7 @@ const PatientsManager = () => {
   const updatePatient = () => {
     axios
       .put(
-        `http://localhost:3000/patients/${patientData.patientID}`,
+        "http://localhost:3000/patients/${patientData.patientID}",
         patientData
       )
       .then((response) => {
@@ -289,7 +301,7 @@ const PatientsManager = () => {
             <FormControl id="dateOfBirth" mb={4}>
               <FormLabel>Date of Birth</FormLabel>
               <Input
-                type="text"
+                type="date"
                 name="dateOfBirth"
                 value={patientData.dateOfBirth}
                 onChange={handleInputChange}
@@ -297,12 +309,15 @@ const PatientsManager = () => {
             </FormControl>
             <FormControl id="gender" mb={4}>
               <FormLabel>Gender</FormLabel>
-              <Input
-                type="text"
+              <Select
                 name="gender"
                 value={patientData.gender}
                 onChange={handleInputChange}
-              />
+              >
+                <option value="male">Male</option>
+                <option value="female">Female</option>
+                <option value="other">Other</option>
+              </Select>
             </FormControl>
             <FormControl id="email" mb={4}>
               <FormLabel>Email</FormLabel>
