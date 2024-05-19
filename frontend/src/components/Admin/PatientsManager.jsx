@@ -26,6 +26,7 @@ import {
   FormLabel,
   Input,
   useDisclosure,
+  Select,
 } from "@chakra-ui/react";
 import axios from "axios";
 
@@ -42,7 +43,6 @@ const PatientsManager = () => {
     email: "",
     phoneNumber: "",
     password: "",
-    departmentID: "",
   });
   const { isOpen, onOpen, onClose } = useDisclosure();
   const toast = useToast();
@@ -104,10 +104,21 @@ const PatientsManager = () => {
         });
       });
   };
-
   const handleInputChange = (e) => {
     const { name, value } = e.target;
-    setPatientData({ ...patientData, [name]: value });
+
+    // Convert date to the required format if the field is dateOfBirth
+    const convertedValue =
+      name === "dateOfBirth" ? convertDateFormat(value) : value;
+
+    setPatientData({ ...patientData, [name]: convertedValue });
+  };
+
+  const convertDateFormat = (dateString) => {
+    const parts = dateString.split("/");
+    if (parts.length !== 3) return dateString; // Return the original string if format is incorrect
+    const [month, day, year] = parts;
+    return `${year}-${month.padStart(2, "0")}-${day.padStart(2, "0")}`;
   };
 
   const addPatient = () => {
@@ -145,7 +156,6 @@ const PatientsManager = () => {
       email: patient.email,
       phoneNumber: patient.phoneNumber,
       password: "", // leave password empty for security
-      departmentID: patient.departmentID,
     });
     setIsEdit(true);
     onOpen();
@@ -153,7 +163,10 @@ const PatientsManager = () => {
 
   const updatePatient = () => {
     axios
-      .put(`http://localhost:3000/patients/${patientData.patientID}`, patientData)
+      .put(
+        http://localhost:3000/patients/${patientData.patientID},
+        patientData
+      )
       .then((response) => {
         toast({
           title: "Patient updated successfully",
@@ -166,7 +179,7 @@ const PatientsManager = () => {
         // Update the patients state to reflect the changes
         setPatients((prev) =>
           prev.map((patient) =>
-            patient.patientID === patientData.patientID ? response.data : patient
+            patient.patientID === patientData.patientID ? patientData : patient
           )
         );
       })
@@ -247,6 +260,15 @@ const PatientsManager = () => {
           <ModalHeader>{isEdit ? "Edit Patient" : "Add Patient"}</ModalHeader>
           <ModalCloseButton />
           <ModalBody>
+            <FormControl id="patientID" mb={4}>
+              <FormLabel>T.C Kimlik Numarası</FormLabel>
+              <Input
+                type="text"
+                name="patientID"
+                value={patientData.patientID}
+                onChange={handleInputChange}
+              />
+            </FormControl>
             <FormControl id="firstName" mb={4}>
               <FormLabel>First Name</FormLabel>
               <Input
@@ -268,7 +290,7 @@ const PatientsManager = () => {
             <FormControl id="dateOfBirth" mb={4}>
               <FormLabel>Date of Birth</FormLabel>
               <Input
-                type="text"
+                type="date"
                 name="dateOfBirth"
                 value={patientData.dateOfBirth}
                 onChange={handleInputChange}
@@ -276,12 +298,15 @@ const PatientsManager = () => {
             </FormControl>
             <FormControl id="gender" mb={4}>
               <FormLabel>Gender</FormLabel>
-              <Input
-                type="text"
+              <Select
                 name="gender"
                 value={patientData.gender}
                 onChange={handleInputChange}
-              />
+              >
+                <option value="male">Male</option>
+                <option value="female">Female</option>
+                <option value="other">Other</option>
+              </Select>
             </FormControl>
             <FormControl id="email" mb={4}>
               <FormLabel>Email</FormLabel>
@@ -312,7 +337,6 @@ const PatientsManager = () => {
                 />
               </FormControl>
             )}
-
           </ModalBody>
           <ModalFooter>
             <Button
