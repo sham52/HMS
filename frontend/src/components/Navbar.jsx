@@ -1,6 +1,5 @@
 import React, { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { useAuth } from "../context/AuthContext";
 import {
   Box,
   Flex,
@@ -20,10 +19,9 @@ import {
 } from "@chakra-ui/react";
 import { HamburgerIcon, CloseIcon } from "@chakra-ui/icons";
 
-const Navbar = ({}) => {
+const Navbar = ({ authToken, setAuthToken }) => {
   const navigate = useNavigate();
   const { isOpen, onOpen, onClose } = useDisclosure();
-  const { authToken, setAuthToken } = useAuth();
 
   const signOut = async () => {
     localStorage.clear();

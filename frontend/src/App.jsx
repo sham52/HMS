@@ -1,7 +1,6 @@
 import "./App.css";
 import { useState, useEffect } from "react";
 import { Routes, Route, useNavigate } from "react-router-dom";
-import { AuthProvider, useAuth } from "./context/AuthContext";
 
 import Login from "./components/Login";
 import Home from "./components/Home";
@@ -12,13 +11,11 @@ import Admin from "./components/Admin/Admin";
 import PatientMain from "./components/Patient/PatientMain";
 import PharmacistMain from "./components/Pharmacist/PharmacistMain";
 import DoctorMain from "./components/Doctor/DoctorMain";
-import Protected from "./components/Protected";
 
 import Navbar from "./components/Navbar";
 
 const App = () => {
-  const { authToken, setAuthToken } = useAuth();
-  const [isSignedIn, setIsSignedIn] = useState(null);
+  const [authToken, setAuthToken] = useState();
   const navigate = useNavigate();
 
   const getAuthTokenFromLocalStorage = () => {
@@ -56,22 +53,8 @@ const App = () => {
             <Register authToken={authToken} setAuthToken={setAuthToken} />
           }
         />
-        <Route
-          path="patient-main"
-          element={
-            <Protected>
-              <PatientMain />
-            </Protected>
-          }
-        />
-        <Route
-          path="doctor-main"
-          element={
-            <Protected>
-              <DoctorMain />
-            </Protected>
-          }
-        />
+        <Route path="patient-main" element={<PatientMain />} />
+        <Route path="doctor-main" element={<DoctorMain />} />
         <Route path="pharmacist-main" element={<PharmacistMain />} />
         <Route path="admin" element={<Admin />} />
       </Routes>

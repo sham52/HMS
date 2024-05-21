@@ -1,6 +1,5 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
-import { useAuth } from "../context/AuthContext";
 import axios from "axios";
 
 import {
@@ -23,8 +22,7 @@ const validationSchema = Yup.object().shape({
   password: Yup.string().required("Şifre gerekli"),
 });
 
-const Login = ({ isSignedIn, setIsSignedIn }) => {
-  const { setAuthToken } = useAuth();
+const Login = ({ setAuthToken }) => {
   const navigate = useNavigate();
   const handleSubmit = async (values, actions) => {
     try {
@@ -57,7 +55,6 @@ const Login = ({ isSignedIn, setIsSignedIn }) => {
 
           actions.resetForm();
           setAuthToken(data.token);
-          setIsSignedIn(true);
           if (data.userType === "Doctor") navigate("/doctor-main");
           else if (data.userType === "Pharmacist") navigate("/pharmacist-main");
           else if (data.userType === "Admin") navigate("/admin");

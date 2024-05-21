@@ -1,6 +1,5 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { useAuth } from "../context/AuthContext";
 
 import {
   ChakraProvider,
@@ -49,8 +48,7 @@ const validationSchema = Yup.object().shape({
     }),
   email: Yup.string().email("Geçerli bir e-posta adresi girin"),
 });
-const RegisterPage = () => {
-  const { setAuthToken } = useAuth();
+const RegisterPage = ({ authToken, setAuthToken }) => {
   const [isRegistered, setIsRegistered] = useState(false);
   const navigate = useNavigate();
 

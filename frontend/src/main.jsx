@@ -6,7 +6,6 @@ import { extendTheme } from "@chakra-ui/react";
 import { BrowserRouter as Router } from "react-router-dom";
 import Navbar from "./components/Navbar.jsx";
 import "./index.css";
-import { AuthProvider, useAuth } from "./context/AuthContext";
 
 const colors = {
   brand: {
@@ -19,11 +18,9 @@ const colors = {
 const theme = extendTheme({ colors });
 
 ReactDOM.createRoot(document.getElementById("root")).render(
-  <AuthProvider>
-    <ChakraProvider theme={theme}>
-      <Router>
-        <App />
-      </Router>
-    </ChakraProvider>
-  </AuthProvider>
+  <ChakraProvider theme={theme}>
+    <Router>
+      <App />
+    </Router>
+  </ChakraProvider>
 );
