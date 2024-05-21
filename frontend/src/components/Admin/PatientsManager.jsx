@@ -276,7 +276,6 @@ const PatientsManager = () => {
                 name="patientID"
                 value={patientData.patientID}
                 onChange={handleInputChange}
-                disabled
               />
             </FormControl>
             <FormControl id="firstName" mb={4}>

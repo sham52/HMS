@@ -26,6 +26,7 @@ import {
   FormLabel,
   Input,
   useDisclosure,
+  Select,
 } from "@chakra-ui/react";
 import axios from "axios";
 
@@ -257,7 +258,6 @@ const DoctorsManager = () => {
                 name="doctorID"
                 value={doctorData.doctorID}
                 onChange={handleInputChange}
-                disabled
               />
             </FormControl>
             <FormControl id="firstName" mb={4}>
@@ -281,7 +281,7 @@ const DoctorsManager = () => {
             <FormControl id="dateOfBirth" mb={4}>
               <FormLabel>Date of Birth</FormLabel>
               <Input
-                type="text"
+                type="date"
                 name="dateOfBirth"
                 value={doctorData.dateOfBirth}
                 onChange={handleInputChange}
@@ -289,12 +289,15 @@ const DoctorsManager = () => {
             </FormControl>
             <FormControl id="gender" mb={4}>
               <FormLabel>Gender</FormLabel>
-              <Input
-                type="text"
+              <Select
                 name="gender"
                 value={doctorData.gender}
                 onChange={handleInputChange}
-              />
+              >
+                <option value="Erkek">Erkek</option>
+                <option value="Kadın">Kadın</option>
+                <option value="Diğer">Diğer</option>
+              </Select>
             </FormControl>
             <FormControl id="email" mb={4}>
               <FormLabel>Email</FormLabel>
