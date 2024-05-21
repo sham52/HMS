@@ -106,8 +106,6 @@ const PatientsManager = () => {
   };
   const handleInputChange = (e) => {
     const { name, value } = e.target;
-
-    // Convert date to the required format if the field is dateOfBirth
     const convertedValue =
       name === "dateOfBirth" ? convertDateFormat(value) : value;
 
@@ -314,9 +312,9 @@ const PatientsManager = () => {
                 value={patientData.gender}
                 onChange={handleInputChange}
               >
-                <option value="male">Male</option>
-                <option value="female">Female</option>
-                <option value="other">Other</option>
+                <option value="Erkek">Erkek</option>
+                <option value="Kadın">Kadın</option>
+                <option value="Diğer">Diğer</option>
               </Select>
             </FormControl>
             <FormControl id="email" mb={4}>
