@@ -114,7 +114,7 @@ async function updatePatient(req, res) {
     res.json({ message: "Patient updated successfully" });
   } catch (err) {
     console.error(err);
-    res.status(500).json({ message: "Server Error" });
+    res.status(500).json({ message: err.sqlMessage });
   }
 }
 
@@ -219,12 +219,11 @@ const getPatientDetails = async (req, res) => {
       email: rows[0].email,
       phoneNumber: rows[0].phoneNumber,
       appointments: rows.map((row) => ({
-        appointments: rows.map((row) => ({
-          appointmentDate: row.appointmentDate,
-          doctorFirstName: row.doctorFirstName,
-          doctorLastName: row.doctorLastName,
-          appointmentID: row.appointmentID,
-        })),
+        appointmentDate: row.appointmentDate,
+        doctorFirstName: row.doctorFirstName,
+        doctorLastName: row.doctorLastName,
+        appointmentID: row.appointmentID,
+
         appointmentID: row.appointmentID,
       })),
     };

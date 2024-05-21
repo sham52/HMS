@@ -150,7 +150,7 @@ const DoctorsManager = () => {
       email: doctor.email,
       phoneNumber: doctor.phoneNumber,
       password: "", // leave password empty for security
-      departmentID: patient.departmentID,
+      departmentID: doctor.departmentID,
     });
     setIsEdit(true);
     onOpen();

@@ -169,7 +169,7 @@ const PatientsManager = () => {
   const updatePatient = () => {
     axios
       .put(
-        "http://localhost:3000/patients/${patientData.patientID}",
+        `http://localhost:3000/patients/${patientData.patientID}`,
         patientData
       )
       .then((response) => {

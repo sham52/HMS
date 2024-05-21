@@ -62,6 +62,7 @@ const PatientMain = () => {
           email: data.email,
           appointments: data.appointments,
         }));
+        console.log(response.data);
       } catch (err) {
         console.error("Error fetching patient:", err);
       }
@@ -71,7 +72,6 @@ const PatientMain = () => {
       try {
         const response = await axios.get("http://localhost:3000/doctors");
         setDoctorData(response.data);
-        console.log(response.data);
       } catch (err) {
         console.error("Error fetching doctors:", err);
       }
