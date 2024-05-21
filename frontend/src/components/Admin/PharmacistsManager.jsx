@@ -275,6 +275,7 @@ const PharmacistsManager = () => {
                 name="pharmacistID"
                 value={pharmacistData.pharmacistID}
                 onChange={handleInputChange}
+                disabled
               />
             </FormControl>
             <FormControl id="firstName" mb={4}>
